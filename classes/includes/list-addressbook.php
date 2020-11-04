@@ -107,6 +107,7 @@ if (!class_exists('List_Addressbook')) {
                 'id_address'    => "ID Address",
                 'first_name'    => "First Name",
                 'last_name'     => "Last Name",
+                'full_name'     => "Full Name",
                 'phone'         => "Phone",
                 'district'      => "District",
                 'city'          => "City",
@@ -132,6 +133,8 @@ if (!class_exists('List_Addressbook')) {
                 case 'tag':
                     return $item[$column_name];
                     break;
+                case 'full_name':
+                    return "{$item['first_name']} {$item['last_name']}";
                 case 'action':
                     return '<a class="topdress-view-address" address-id="' . $item['id_address'] . '">[view]</a>';
                     break;
@@ -157,7 +160,7 @@ if (!class_exists('List_Addressbook')) {
         public function get_hidden_columns()
         {
             return array(
-                'id_address'
+                'id_address', 'first_name', 'last_name'
             );
         }
     }
