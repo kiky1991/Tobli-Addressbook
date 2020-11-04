@@ -48,7 +48,7 @@ if (!class_exists('Topbli_Addressbook')) {
 
             // Lets run our class
             new TOPDRESS_Admin();
-            // new TOPDRESS_Woocommerce();
+            new TOPDRESS_Woocommerce();
             new TOPDRESS_Ajax();
             register_activation_hook(__FILE__, array($this, 'on_plugin_activation'));
         }
