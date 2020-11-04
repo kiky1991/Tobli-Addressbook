@@ -66,24 +66,5 @@ if (!class_exists('TOPDRESS_Helper')) {
 
             return $error;
         }
-
-        /**
-         * Get address ids from order
-         *
-         * @param  integer $order_id Order ID.
-         * @param  string  $type     Address type.
-         * @return integer           Address id.
-         */
-        public function get_address_id_from_order($order_id = 0, $type = 'billing_state')
-        {
-            if (!in_array($type, array('billing_country', 'billing_state', 'billing_city', 'billing_district', 'shipping_country', 'shipping_state', 'shipping_city', 'shipping_district'), true)) {
-                return 0;
-            }
-            $id = get_post_meta($order_id, '_' . $type . '_id', true);
-            if ('' === $id) {
-                $id = get_post_meta($order_id, '_' . $type, true);
-            }
-            return !in_array($type, array('billing_country', 'shipping_country')) ? intval($id) : $id;
-        }
     }
 }

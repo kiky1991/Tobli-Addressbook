@@ -27,7 +27,7 @@ if (!class_exists('List_Addressbook')) {
             );
         }
 
-        public function prepare_items($search_term = "")
+        public function prepare_items($id_user = "")
         {
             global $wpdb;
 
@@ -59,8 +59,8 @@ if (!class_exists('List_Addressbook')) {
             $where = "";
 
             // if have search term
-            if (!empty($search_term)) {
-                $where = "WHERE first_name like '%$search_term%' OR last_name like '%$search_term%'";
+            if (!empty($id_user)) {
+                $where = "WHERE id_user = $id_user";
             }
 
             // count id from table to get max page
@@ -133,7 +133,7 @@ if (!class_exists('List_Addressbook')) {
                     return $item[$column_name];
                     break;
                 case 'action':
-                    return '---';
+                    return '<a class="topdress-view-address" address-id="' . $item['id_address'] . '">[view]</a>';
                     break;
                 default:
                     return "no value";

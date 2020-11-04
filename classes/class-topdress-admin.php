@@ -56,6 +56,22 @@ if (!class_exists('TOPDRESS_Admin')) {
             if ($this->validate_screen('shop_order')) {
                 wp_enqueue_style('topdress-shop-order', TOPDRESS_PLUGIN_URI . '/assets/css/shop-order.css', '', TOPDRESS_VERSION);
             }
+
+            if ($this->validate_screen('users_page_topdress-address-book')) {
+                wp_enqueue_style('topdress-admin-address-book', TOPDRESS_PLUGIN_URI . '/assets/css/admin-address-book.css', '', TOPDRESS_VERSION);
+                wp_enqueue_script('topdress-admin-address-book', TOPDRESS_PLUGIN_URI . "/assets/js/admin-address-book.js", array('jquery'), TOPDRESS_PLUGIN_URI, true);
+                wp_enqueue_style('select2_css', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css');
+                wp_register_script('select2_js', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js', array('jquery'), '4.0.3', true);
+                wp_enqueue_script('select2_js');
+                wp_localize_script(
+                    'topdress-admin-address-book',
+                    'topdress',
+                    array(
+                        'url' => admin_url('admin-ajax.php'),
+                        'nonce' => wp_create_nonce('topdress-view-address-nonce'),
+                    )
+                );
+            }
         }
 
         /**
@@ -110,11 +126,6 @@ if (!class_exists('TOPDRESS_Admin')) {
         {
             include_once TOPDRESS_PLUGIN_PATH . '/classes/includes/list-addressbook.php';
 
-            $search = "";
-            if (isset($_POST['s']) && !empty($_POST['s'])) {
-                $search = sanitize_text_field(wp_unslash($_POST['s']));
-            }
-
             if (isset($_POST['action']) && $_POST['action'] == 'bulk_address_delete' && !empty($_POST['address'])) {
                 $result = $this->core->delete_addressbook($_POST['address']);
 
@@ -123,6 +134,11 @@ if (!class_exists('TOPDRESS_Admin')) {
                 } else {
                     $this->display_flash_notices('Success delete addressbook!');
                 }
+            }
+
+            $id_user = '';
+            if (isset($_POST['search_customer_address']) && isset($_POST['topdress_user_id']) && !empty($_POST['topdress_user_id'])) {
+                $id_user = sanitize_text_field(wp_unslash($_POST['topdress_user_id']));
             }
 
             $list_address = new List_Addressbook();

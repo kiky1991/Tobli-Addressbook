@@ -24,5 +24,27 @@ if (!class_exists('TOPDRESS_Core')) {
             $id = implode(',', $ids);
             return $wpdb->query("DELETE FROM $table WHERE id_address IN($id)");
         }
+
+        /**
+         * TOPDRESS_Core::search_addressbook
+         * 
+         * Search addressbook
+         * @param   array   $ids    array id
+         * 
+         * @return  array|bool    bool if false
+         */
+        public function search_addressbook($address_id)
+        {
+            global $wpdb;
+            $table = $wpdb->prefix . "topdress_address_book";
+
+            return $wpdb->get_row(
+                $wpdb->prepare(
+                    "SELECT * FROM $table WHERE id_address = %d",
+                    $address_id
+                ),
+                ARRAY_A
+            );
+        }
     }
 }
