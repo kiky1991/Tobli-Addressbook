@@ -13,32 +13,19 @@ if (!class_exists('TOPDRESS_Admin')) {
          */
         public function __construct()
         {
-            add_action('admin_menu', array($this, 'admin_menu'), 10);
-
-            // order page
-            add_filter('woocommerce_admin_billing_fields', array($this, 'custom_admin_billing_fields'), 99);
-            add_filter('woocommerce_admin_shipping_fields', array($this, 'custom_admin_shipping_fields'), 99);
+            $this->helper   = new TOPDRESS_Helper();
+            $this->core     = new TOPDRESS_Core();
 
             // assets
             add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'), 10);
 
-            // // woocommerce settings
-            // add_filter('woocommerce_account_settings', array($this, 'add_settings'));
-
-            // // user profile
-            // add_action('show_user_profile', array($this, 'show_form_dropship'), 30, 1);
-            // add_action('edit_user_profile', array($this, 'show_form_dropship'), 30, 1);
-            // add_action('personal_options_update', array($this, 'save_form_dropship'), 1);
-            // add_action('edit_user_profile_update', array($this, 'save_form_dropship'), 1);
-
-            // // admin order details form
-            // add_action('woocommerce_admin_order_data_after_order_details', array($this, 'admin_order_detail'), 12, 1);
-            // add_action('woocommerce_process_shop_order_meta', array($this, 'save_admin_order_detail'), 12, 1);
+            // hook
+            add_action('admin_menu', array($this, 'admin_menu'), 10);
+            add_filter('woocommerce_admin_billing_fields', array($this, 'custom_admin_billing_fields'), 99);
+            add_filter('woocommerce_admin_shipping_fields', array($this, 'custom_admin_shipping_fields'), 99);
 
             // // notices
-            // add_action('admin_notices', array($this, 'display_flash_notices'), 12);
-
-            $this->helper      = new TOPDRESS_Helper();
+            add_action('admin_notices', array($this, 'display_flash_notices'), 12);
         }
 
         /**
@@ -72,7 +59,7 @@ if (!class_exists('TOPDRESS_Admin')) {
         }
 
         /**
-         * TOPDROP_Admin::admin_menu
+         * TOPDRESS_Admin::admin_menu
          * 
          * Admin menu
          * 
@@ -114,6 +101,11 @@ if (!class_exists('TOPDRESS_Admin')) {
             return $fields;
         }
 
+        /**
+         * Render page addressboook
+         *
+         * @return HTML
+         */
         public function render_page_addressbook()
         {
             include_once TOPDRESS_PLUGIN_PATH . '/classes/includes/list-addressbook.php';
@@ -121,22 +113,24 @@ if (!class_exists('TOPDRESS_Admin')) {
             $search = "";
             if (isset($_POST['s']) && !empty($_POST['s'])) {
                 $search = sanitize_text_field(wp_unslash($_POST['s']));
-                var_dump($search);
-                die;
             }
 
-            if (isset($_POST['action']) && $_POST['action'] == 'bulk_addressbook_delete') {
-                // $this->core->update_redeem($_POST['address']);
+            if (isset($_POST['action']) && $_POST['action'] == 'bulk_address_delete' && !empty($_POST['address'])) {
+                $result = $this->core->delete_addressbook($_POST['address']);
+
+                if (!$result) {
+                    $this->display_flash_notices('Cannot delete addressbook, try again!', 'error');
+                } else {
+                    $this->display_flash_notices('Success delete addressbook!');
+                }
             }
 
-            // prepare get the list balance
             $list_address = new List_Addressbook();
-
             include_once TOPDRESS_PLUGIN_PATH . 'views/admin-users-addressbook.php';
         }
 
         /**
-         * TOPDROP_Admin::add_flash_notice
+         * TOPDRESS_Admin::add_flash_notice
          * 
          * Add notice
          * @param   string  $message  Message
@@ -156,7 +150,7 @@ if (!class_exists('TOPDRESS_Admin')) {
         }
 
         /**
-         * TOPDROP_Admin::display_flash_notices
+         * TOPDRESS_Admin::display_flash_notices
          * 
          * Display notice
          * 
