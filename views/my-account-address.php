@@ -5,7 +5,9 @@
                 <header class="woocommerce-Address-Book-title title">
                     <h3><?php esc_html_e('Shipping Address Book', 'topdress'); ?></h3>
                 </header>
-                <?php include_once TOPDRESS_PLUGIN_PATH . 'views/table-list-address-book.php'; ?>
+                <div class="table-list-address-book">
+                    <?php include_once TOPDRESS_PLUGIN_PATH . 'views/table-list-address-book.php'; ?>
+                </div>
                 <a href="<?php esc_attr_e(wc_get_page_permalink('myaccount') . 'edit-address/add-addressbook'); ?>" class="add">Add</a>
             </div>
         </div>

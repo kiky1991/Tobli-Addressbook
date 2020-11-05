@@ -10,3 +10,7 @@
     overflow-x: auto;
     /* Horizontal */
 }
+
+#delete-address-book {
+    cursor: pointer;
+}

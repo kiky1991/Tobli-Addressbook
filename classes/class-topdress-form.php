@@ -23,6 +23,12 @@ class TOPDRESS_Form
      */
     public function form_new_addressbook()
     {
+        global $woocommerce;
+        $countries_obj   = new WC_Countries();
+        $countries   = $countries_obj->__get('countries');
+        $default_country = $countries_obj->get_base_country();
+        $default_county_states = $countries_obj->get_states($default_country);
+
         return apply_filters('form_new_addressbook', array(
             'first_name' => array(
                 'field' => array(
@@ -30,7 +36,8 @@ class TOPDRESS_Form
                     'label'       => __('First Name', 'topdress'),
                     'placeholder' => __('', 'topdress'),
                     'required'    => true,
-                    'class'       => array('form-row', 'form-row-first')
+                    'class'       => array('form-row-first'),
+                    'autocomplete' => 'given-name'
                 ),
                 'value' => ''
             ),
@@ -40,27 +47,98 @@ class TOPDRESS_Form
                     'label'       => __('Last Name', 'topdress'),
                     'placeholder' => __('', 'topdress'),
                     'required'    => true,
-                    'class'       => array('form-row', 'form-row-last')
+                    'class'       => array('form-row-last'),
+                    'autocomplete' => 'family-name'
                 ),
                 'value' => ''
             ),
-            'city' => array(
+            'country' => array(
                 'field' => array(
-                    'type'        => 'checkbox',
-                    'label'       => __('Town / City', 'topdress'),
+                    'type'        => 'country',
+                    'label'       => __('Country', 'topdress'),
                     'placeholder' => __('', 'topdress'),
                     'required'    => true,
-                    'class'       => array('input-checkbox', 'woocommerce-form-row', 'form-row-wide')
+                    'class'       => array('form-row-wide', 'address-field', 'update_totals_on_change'),
+                    'autocomplete' => 'country'
                 ),
                 'value' => ''
             ),
-            'district' => array(
+            'shipping_state' => array(
+                'field' => array(
+                    'type'        => 'state',
+                    'label'       => __('Province', 'topdress'),
+                    'placeholder' => __('Select Province', 'topdress'),
+                    'required'    => true,
+                    'class'       => array('form-row-wide', 'address-field', 'validate-required', 'init-select2'),
+                    'validate'    => array('state'),
+                    'autocomplete' => 'address-level1',
+                    'country_field' => 'shipping_country',
+                    'country'   => 'ID',
+                    'options' => $default_county_states
+                ),
+                'value' => 34
+            ),
+            'shipping_city' => array(
+                'field' => array(
+                    'type'        => 'select',
+                    'label'       => __('City', 'topdress'),
+                    'placeholder' => __('Select City', 'topdress'),
+                    'required'    => true,
+                    'class'       => array('form-row-wide', 'address-field', 'validate-required', 'init-select2'),
+                    'autocomplete' => 'address-level2',
+                    'options'        => array('' => __('Select City', 'pok')),
+                ),
+                'value' => ''
+            ),
+            'shipping_district' => array(
+                'field' => array(
+                    'type'        => 'select',
+                    'label'       => __('District', 'topdress'),
+                    'placeholder' => __('Select District', 'topdress'),
+                    'required'    => true,
+                    'class'       => array('form-row-wide', 'update_totals_on_change', 'address-field', 'init-select2'),
+                    'options'   => array('kalsd'),
+                ),
+                'value' => ''
+            ),
+            'address_1' => array(
+                'field' => array(
+                    'type'        => 'text',
+                    'label'       => __('Address', 'topdress'),
+                    'placeholder' => __('', 'topdress'),
+                    'required'    => true,
+                    'class'       => array('form-row', 'form-row-wide')
+                ),
+                'value' => ''
+            ),
+            'phone' => array(
                 'field' => array(
                     'type'        => 'tel',
                     'label'       => __('Phone', 'topdrop'),
                     'placeholder' => __('', 'topdrop'),
                     'required'    => true,
                     'class'       => array('form-row', 'form-row-last')
+                ),
+                'value' => ''
+            ),
+            'postcode' => array(
+                'field' => array(
+                    'type'        => 'text',
+                    'label'       => __('Postcode', 'topdrop'),
+                    'placeholder' => __('', 'topdrop'),
+                    'required'    => true,
+                    'class'       => array('form-row', 'form-row-last'),
+                    'validate'  => array('postcode')
+                ),
+                'value' => ''
+            ),
+            'tag' => array(
+                'field' => array(
+                    'type'        => 'text',
+                    'label'       => __('Tag', 'topdress'),
+                    'placeholder' => __('', 'topdress'),
+                    'required'    => true,
+                    'class'       => array('form-row-wide')
                 ),
                 'value' => ''
             ),

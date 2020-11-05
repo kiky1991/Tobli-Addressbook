@@ -15,6 +15,7 @@ class TOPDRESS_Ajax
 
         add_action('wp_ajax_topdress_search_customer', array($this, 'search_customer'));
         add_action('wp_ajax_topdress_view_address', array($this, 'view_address'));
+        add_action('wp_ajax_topdress_delete_address', array($this, 'delete_address'));
     }
 
     /**
@@ -97,6 +98,36 @@ class TOPDRESS_Ajax
         if ($result) {
             ob_start();
             include_once TOPDRESS_PLUGIN_PATH . 'views/admin-view-addressbook.php';
+            $content = ob_get_contents();
+            ob_end_clean();
+            echo $content;
+        }
+
+        wp_die();
+    }
+
+    public function delete_address()
+    {
+        check_ajax_referer('topdress-delete-address-nonce', 'topdress_nonce');
+
+        if (!isset($_POST['address_id']) || empty($_POST['address_id'])) {
+            wp_die(-1);
+        }
+
+        $id_address = sanitize_text_field(wp_unslash($_POST['address_id']));
+        $result = $this->core->delete_addressbook([$id_address]);
+
+        $q = array(
+            'id_user'   => array(
+                'separator' => '=',
+                'value'     => get_current_user_id()
+            )
+        );
+
+        $addresses = $this->core->list_addressbook($q);
+        if ($result) {
+            ob_start();
+            include_once TOPDRESS_PLUGIN_PATH . 'views/table-list-address-book.php';
             $content = ob_get_contents();
             ob_end_clean();
             echo $content;

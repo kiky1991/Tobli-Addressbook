@@ -80,5 +80,66 @@ if (!class_exists('TOPDRESS_Core')) {
                 ARRAY_A
             );
         }
+
+        /**
+         * TOPDRESS_Core::update_addressbook
+         * 
+         * Get addressbook
+         * 
+         * @return  array|bool    bool if false
+         */
+        public function update_addressbook($data, $update = false)
+        {
+            global $wpdb;
+
+            $table = $wpdb->prefix . 'topdress_address_book';
+            if (!$update) {
+                try {
+                    return $wpdb->insert(
+                        $table,
+                        array(
+                            'id_user'   => $data['id_user'],
+                            'first_name'   => $data['first_name'],
+                            'last_name'    => $data['last_name'],
+                            'country'      => $data['country'],
+                            'state_id'    => $data['state_id'],
+                            'state'       => $data['state'],
+                            'city_id'      => $data['city_id'],
+                            'city'      => $data['city'],
+                            'district_id'      => $data['district_id'],
+                            'district'      => $data['district'],
+                            'address_1'      => $data['address_1'],
+                            'address_2'      => $data['address_2'],
+                            'phone'      => $data['phone'],
+                            'postcode'      => $data['postcode'],
+                            'tag'      => $data['tag'],
+                        )
+                    );
+                } catch (Exception $e) {
+                    return false;
+                }
+            } else {
+                try {
+                    return $wpdb->update(
+                        $table,
+                        array(
+                            'amount'        => $data['amount'],
+                            'bank'          => $data['bank'],
+                            'status'        => $data['status'],
+                            'img'           => $data['img'],
+                            'note'          => $data['reason'],
+                            'ip_user'       => $this->helper->get_the_user_ip(),
+                            'updated_at'    => date('Y-m-d H:i:s')
+                        ),
+                        array(
+                            'id_user'   => $data['id_user'],
+                            'id_topup'  => $data['id_topup'],
+                        )
+                    );
+                } catch (Exception $e) {
+                    return false;
+                }
+            }
+        }
     }
 }
