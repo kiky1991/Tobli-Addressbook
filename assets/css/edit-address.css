@@ -1,0 +1,12 @@
+.woocommerce-Address .address-book {
+    width: 100%;
+}
+
+.woocommerce-account .woocommerce .woocommerce-MyAccount-content .addresses {
+    margin-bottom: 50px;
+}
+
+.topdress-hscroll {
+    overflow-x: auto;
+    /* Horizontal */
+}

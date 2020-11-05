@@ -46,5 +46,39 @@ if (!class_exists('TOPDRESS_Core')) {
                 ARRAY_A
             );
         }
+
+        /**
+         * TOPDRESS_Core::list_addressbook
+         * 
+         * Get addressbook
+         * 
+         * @return  array|bool    bool if false
+         */
+        public function list_addressbook($query = array(), $limit = 10)
+        {
+            global $wpdb;
+            $table = $wpdb->prefix . 'topdress_address_book';
+
+            $where = '';
+            if (count($query)) {
+                $dump = array();
+                foreach ($query as $key => $value) {
+                    $dump[] = "{$key} {$value['separator']} '{$value['value']}'";
+                }
+
+                $where = "WHERE " . implode(' AND ', $dump);
+            }
+
+            return $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT * FROM {$table}
+                    {$where}
+                    ORDER BY created_at ASC 
+                    LIMIT %d",
+                    $limit
+                ),
+                ARRAY_A
+            );
+        }
     }
 }
