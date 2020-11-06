@@ -2,7 +2,7 @@ jQuery(function ($) {
     $('#search-address-book').on('keyup', function (e) {
         let term = $(this).val();
 
-        if (term.length >= 3) {
+        if (term.length == 0 || term.length >= 3) {
             $.ajax({
                 type: 'POST',
                 url: topdress.url,

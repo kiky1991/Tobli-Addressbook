@@ -12,6 +12,7 @@ class TOPDRESS_Ajax
     public function __construct()
     {
         $this->core = new TOPDRESS_Core();
+        $this->helper = new TOPDRESS_Helper();
 
         add_action('wp_ajax_topdress_search_customer', array($this, 'search_customer'));
         add_action('wp_ajax_topdress_view_address', array($this, 'view_address'));
@@ -203,21 +204,30 @@ class TOPDRESS_Ajax
         }
 
         $term = sanitize_text_field(wp_unslash($_POST['term']));
-        if (strlen($term) < 3) {
+        if (!empty($term) && strlen($term) < 3) {
             wp_die(false);
         }
-
+        
         $user_id = get_current_user_id();
-        $q = array(
-            'id_user'   => array(
-                'separator' => '=',
-                'value'     => $user_id
-            ),
-            'first_name' => array(
-                'separator' => 'like',
-                'value'     => "%{$term}%"
-            ),
-        );
+        if (!empty($term)) {
+            $q = array(
+                'id_user'   => array(
+                    'separator' => '=',
+                    'value'     => $user_id
+                ),
+                'first_name' => array(
+                    'separator' => 'like',
+                    'value'     => "%{$term}%"
+                ),
+            );
+        } else {
+            $q = array(
+                'id_user'   => array(
+                    'separator' => '=',
+                    'value'     => $user_id
+                )
+            );
+        }
 
         $address_id = get_user_meta($user_id, 'topdress_address_id', true);
         $addresses = $this->core->list_addressbook($q);
