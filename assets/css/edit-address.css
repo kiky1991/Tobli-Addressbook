@@ -7,10 +7,19 @@
 }
 
 .topdress-hscroll {
-    overflow-x: auto;
+    /* overflow-x: auto; */
     /* Horizontal */
 }
 
-#delete-address-book {
+#delete-address-book,
+#set-address-book {
     cursor: pointer;
+}
+
+.topdress-head-table.left {
+    float: left;
+}
+
+.topdress-head-table.right {
+    float: right;
 }

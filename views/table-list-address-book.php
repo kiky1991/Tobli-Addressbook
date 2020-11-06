@@ -2,7 +2,7 @@
     <table width="100%" border="1" cellspacing="0" cellpadding="6">
         <tbody>
             <tr>
-                <th><input type="checkbox" name="ids" id=""></th>
+                <th><input type="checkbox" name="ids" id="topdress-check-all"></th>
                 <th><?php esc_html_e('Full Name', 'topdress'); ?></th>
                 <th><?php esc_html_e('Phone', 'topdress'); ?></th>
                 <th><?php esc_html_e('District', 'topdress'); ?></th>
@@ -13,13 +13,18 @@
             <?php if (count($addresses)) : ?>
                 <?php foreach ($addresses as $address) : ?>
                     <tr>
-                        <td><input type="checkbox" name="ids[]"></td>
+                        <td><input type="checkbox" name="ids[]" value="<?php esc_attr_e($address['id_address']); ?>"></td>
                         <td><?php esc_html_e(wp_sprintf('%1$s %2$s', __($address['first_name']), __($address['last_name']))); ?></td>
                         <td><?php esc_html_e($address['phone']); ?></td>
                         <td><?php esc_html_e($address['district']); ?></td>
                         <td><?php esc_html_e($address['city']); ?></td>
                         <td><?php esc_html_e($address['tag']); ?></td>
-                        <td>[Edit]&nbsp;<a id="delete-address-book" address-id="<?php esc_attr_e($address['id_address']); ?>">[Delete]</a>&nbsp;<a id="set-address-book" address-id="<?php esc_attr_e($address['id_address']); ?>">[Set as default]</a></td>
+                        <td>[Edit]&nbsp;
+                            <a id="delete-address-book" address-id="<?php esc_attr_e($address['id_address']); ?>">[Delete]</a>&nbsp;
+                            <?php if ($address_id !== $address['id_address']) : ?>
+                                <a id="set-address-book" address-id="<?php esc_attr_e($address['id_address']); ?>">[Set as default]</a>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php else : ?>
@@ -32,3 +37,15 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+    jQuery(function($) {
+        $("#topdress-check-all").change(function() {
+            if (this.checked == true) {
+                $('input[type=checkbox]').prop('checked', true);
+            } else {
+                $('input[type=checkbox]').prop('checked', false);
+            }
+        });
+    });
+</script>

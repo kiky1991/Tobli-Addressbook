@@ -1,4 +1,27 @@
 jQuery(function ($) {
+    $('#search-address-book').on('keyup', function (e) {
+        let term = $(this).val();
+
+        if (term.length >= 3) {
+            $.ajax({
+                type: 'POST',
+                url: topdress.url,
+                data: {
+                    action: 'topdress_search_address_term',
+                    term: term,
+                    topdress_search_term_nonce: nonce.search_term
+                },
+                success: function (response) {
+                    if (response) {
+                        $('.table-list-address-book').html(response);
+                    }
+                }
+            });
+        }
+
+        e.preventDefault();
+    });
+    
     $(document).on('click', '#delete-address-book', function () {
         if (!confirm('Are you sure?')) {
             return false;
@@ -12,10 +35,35 @@ jQuery(function ($) {
             data: {
                 action: 'topdress_delete_address',
                 address_id: address_id,
-                topdress_nonce: topdress.nonce
+                topdress_delete_nonce: nonce.delete
             },
             success: function (response) {
                 $('.table-list-address-book').html(response);
+            }
+        });
+    });
+
+    $(document).on('click', '#set-address-book', function () {
+        if (!confirm('Are you sure?')) {
+            return false;
+        }
+
+        const address_id = $(this).attr('address-id');
+
+        $.ajax({
+            type: 'POST',
+            url: topdress.url,
+            data: {
+                action: 'topdress_set_default_address',
+                address_id: address_id,
+                topdress_set_default_nonce: nonce.set_default
+            },
+            success: function (response) {
+                if (response.success) {
+                    window.location.href = response.redirect;
+                } else { 
+                    console.log(response.message);
+                }
             }
         });
     });
