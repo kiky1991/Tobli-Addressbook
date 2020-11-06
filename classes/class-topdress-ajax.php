@@ -171,6 +171,7 @@ class TOPDRESS_Ajax
         }
 
         update_user_meta($user_id, 'topdress_address_id', $result['id_address']);
+        update_user_meta($user_id, 'topdress_address_tag', $result['tag']);
         update_user_meta($user_id, 'shipping_first_name', $result['first_name']);
         update_user_meta($user_id, 'shipping_last_name', $result['last_name']);
         update_user_meta($user_id, 'shipping_company', '');
@@ -207,7 +208,7 @@ class TOPDRESS_Ajax
         if (!empty($term) && strlen($term) < 3) {
             wp_die(false);
         }
-        
+
         $user_id = get_current_user_id();
         if (!empty($term)) {
             $q = array(

@@ -19,6 +19,10 @@ class TOPDRESS_Woocommerce
         add_filter('woocommerce_order_get_formatted_shipping_address', array($this, 'change_address'), 10, 3);
         add_action('woocommerce_after_edit_account_address_form', array($this, 'table_address'), 10, 1);
         add_action('template_redirect', array($this, 'save_address'));
+
+        // my account
+        add_filter('woocommerce_localisation_address_formats', array($this, 'my_account_address_localisation'), 50, 3);
+        add_filter('woocommerce_formatted_address_replacements', array($this, 'my_account_address_replacements'), 50, 2);
     }
 
     public function add_pages()
@@ -73,20 +77,6 @@ class TOPDRESS_Woocommerce
             $address .= nl2br("\n($address_tag)");
         }
 
-        return $address;
-    }
-
-    /**
-     * Fix name formatting on myaccount page
-     *
-     * @param  array  $address     Address data.
-     * @param  int    $customer_id Customer ID.
-     * @param  string $name        Billing/Shipping.
-     * @return array               Address data.
-     */
-    public function format_myaccount_address($address, $customer_id, $name)
-    {
-        $address['tag'] = 'rumah';
         return $address;
     }
 
@@ -173,5 +163,27 @@ class TOPDRESS_Woocommerce
 
         wp_safe_redirect(wc_get_page_permalink('myaccount') . 'edit-address/add-addressbook');
         exit;
+    }
+
+    public function my_account_address_localisation($formats)
+    {
+        if (isset($formats['ID'])) {
+            $formats['ID'] .= "\n{address_tag}";
+        }
+
+        return $formats;
+    }
+
+    public function my_account_address_replacements($replacements, $args)
+    {
+        $address_tag = get_user_meta(get_current_user_id(), 'topdress_address_tag', true);
+
+        if (is_wc_endpoint_url('edit-address') && !empty($address_tag) && !isset($args['phone'])) {
+            $replacements['{address_tag}'] = "($address_tag)";
+        } else {
+            $replacements['{address_tag}'] = '';
+        }
+
+        return $replacements;
     }
 }
