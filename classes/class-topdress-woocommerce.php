@@ -67,8 +67,10 @@ class TOPDRESS_Woocommerce
 
     public function change_address($address, $raw_address, $order)
     {
-        if (is_wc_endpoint_url('view-order')) {
-            $address .= nl2br("\n(Customer)");
+        $address_tag = get_post_meta($order->get_id(), '_topdress_address_tag', true);
+
+        if (is_wc_endpoint_url('view-order') && !empty($address_tag)) {
+            $address .= nl2br("\n($address_tag)");
         }
 
         return $address;
