@@ -70,13 +70,10 @@ if (!class_exists('TOPDRESS_Core')) {
             }
 
             return $wpdb->get_results(
-                $wpdb->prepare(
-                    "SELECT * FROM {$table}
+                "SELECT * FROM {$table}
                     {$where}
                     ORDER BY created_at ASC 
-                    LIMIT %d",
-                    $limit
-                ),
+                LIMIT {$limit}",
                 ARRAY_A
             );
         }

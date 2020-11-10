@@ -200,7 +200,7 @@ class TOPDRESS_Ajax
     {
         check_ajax_referer('topdress-search-address-term-nonce', 'topdress_search_term_nonce');
 
-        if (!isset($_POST['term']) || empty($_POST['term'])) {
+        if (!isset($_POST['term'])) {
             wp_die(false);
         }
 
@@ -232,14 +232,12 @@ class TOPDRESS_Ajax
 
         $address_id = get_user_meta($user_id, 'topdress_address_id', true);
         $addresses = $this->core->list_addressbook($q);
-        if ($addresses) {
-            ob_start();
-            include_once TOPDRESS_PLUGIN_PATH . 'views/table-list-address-book.php';
-            $content = ob_get_contents();
-            ob_end_clean();
-            echo $content;
-            wp_die();
-        }
+        ob_start();
+        include_once TOPDRESS_PLUGIN_PATH . 'views/table-list-address-book.php';
+        $content = ob_get_contents();
+        ob_end_clean();
+        echo $content;
+        wp_die();
 
         wp_die(false);
     }

@@ -10,7 +10,7 @@
                 <th><?php esc_html_e('Address Tags', 'topdress'); ?></th>
                 <th><?php esc_html_e('Actions', 'topdress'); ?></th>
             </tr>
-            <?php if (count($addresses)) : ?>
+            <?php if (is_array($addresses) && count($addresses)) : ?>
                 <?php foreach ($addresses as $address) : ?>
                     <tr>
                         <td><input type="checkbox" name="ids[]" value="<?php esc_attr_e($address['id_address']); ?>"></td>

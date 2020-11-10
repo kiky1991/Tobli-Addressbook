@@ -12,7 +12,7 @@
                             <option value="">Bulk actions</option>
                             <option value="delete">Delete</option>
                         </select>
-                        <button type="submit">Apply</button>
+                        <button type="submit" id="topdress-submit-bulk-actions">Apply</button>
                     </div>
                     <div class="topdress-head-table right">
                         <input type="text" name="search_address_book" id="search-address-book">

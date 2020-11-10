@@ -66,10 +66,39 @@ jQuery(function ($) {
                 }
             }
         });
+    }); 
+    
+    $('#topdress-submit-bulk-actions').on('click', function (e) {
+        const ids = $("input[name='ids[]']")
+            .map(function () {
+                if (this.checked == true) {
+                    return $(this).val();
+                }
+            }).get();
+        alert(ids);
+        // $.ajax({
+        //     type: 'POST',
+        //     url: topdress.url,
+        //     data: {
+        //         action: 'topdress_set_default_address',
+        //         address_id: address_id,
+        //         topdress_set_default_nonce: nonce.set_default
+        //     },
+        //     success: function (response) {
+        //         if (response.success) {
+        //             window.location.href = response.redirect;
+        //         } else { 
+        //             console.log(response.message);
+        //         }
+        //     }
+        // });
+
+        e.preventDefault();
     });
 
     $(document).on('ready', function () {
         $("span.select2").removeAttr('style');
         $("span.select2").css('width:100%! important;');
+        $('#table-addressbook').DataTable();
     });
 });
