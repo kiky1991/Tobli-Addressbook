@@ -19,6 +19,7 @@ class TOPDRESS_Ajax
         add_action('wp_ajax_topdress_delete_address', array($this, 'delete_address'));
         add_action('wp_ajax_topdress_set_default_address', array($this, 'set_default_address'));
         add_action('wp_ajax_topdress_search_address_term', array($this, 'search_address_term'));
+        add_action('wp_ajax_topdress_checkout_load_addressbook', array($this, 'checkout_load_addressbook'));
     }
 
     /**
@@ -128,6 +129,7 @@ class TOPDRESS_Ajax
             )
         );
 
+        $address_id = get_user_meta($user_id, 'topdress_address_id', true);
         $addresses = $this->core->list_addressbook($q);
         if ($result) {
             ob_start();
@@ -238,7 +240,28 @@ class TOPDRESS_Ajax
         ob_end_clean();
         echo $content;
         wp_die();
+    }
 
-        wp_die(false);
+    public function checkout_load_addressbook()
+    {
+        check_ajax_referer('topdress-checkout-load-addressbook-nonce', 'topdress_checkout_load_addressbook_nonce');
+
+        $user_id = get_current_user_id();
+        $q = array(
+            'id_user'   => array(
+                'separator' => '=',
+                'value'     => $user_id
+            )
+        );
+
+        $addresses = $this->core->list_addressbook($q);
+        if ($addresses) {
+            ob_start();
+            include_once TOPDRESS_PLUGIN_PATH . 'views/checkout-list-addressbook.php';
+            $content = ob_get_contents();
+            ob_end_clean();
+            echo $content;
+        }
+        wp_die();
     }
 }

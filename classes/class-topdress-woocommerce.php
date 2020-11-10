@@ -19,6 +19,8 @@ class TOPDRESS_Woocommerce
         add_filter('woocommerce_order_get_formatted_shipping_address', array($this, 'change_address'), 10, 3);
         add_action('woocommerce_after_edit_account_address_form', array($this, 'table_address'), 10, 1);
         add_action('template_redirect', array($this, 'save_address'));
+        add_filter('woocommerce_checkout_fields', array($this, 'custom_fields'), 999, 1);
+        add_action('woocommerce_checkout_update_order_meta', array($this, 'save_fields'));
 
         // my account
         add_filter('woocommerce_localisation_address_formats', array($this, 'my_account_address_localisation'), 50, 3);
@@ -64,6 +66,38 @@ class TOPDRESS_Woocommerce
                     'delete' => wp_create_nonce('topdress-delete-address-nonce'),
                     'set_default' => wp_create_nonce('topdress-set-default-address-nonce'),
                     'search_term' => wp_create_nonce('topdress-search-address-term-nonce'),
+                )
+            );
+        }
+
+        if (is_checkout()) {
+            ob_start();
+            include_once TOPDRESS_PLUGIN_PATH . 'views/checkout-button-load-addressbook.php';
+            $button = ob_get_contents();
+            ob_end_clean();
+
+            ob_start();
+            include_once TOPDRESS_PLUGIN_PATH . 'views/checkout-form-load-addressbook.php';
+            $form = ob_get_contents();
+            ob_end_clean();
+
+            wp_enqueue_style('topdress-checkout', TOPDRESS_PLUGIN_URI . '/assets/css/checkout.css', '', TOPDRESS_VERSION);
+            wp_enqueue_script('topdress-checkout', TOPDRESS_PLUGIN_URI . "/assets/js/checkout.js", array('jquery'), TOPDRESS_VERSION, true);
+            wp_localize_script(
+                'topdress-checkout',
+                'topdress',
+                array(
+                    'url'           => admin_url('admin-ajax.php'),
+                    'islogin'       => is_user_logged_in(),
+                    'load_button'   => $button,
+                    'load_form'     => $form,
+                )
+            );
+            wp_localize_script(
+                'topdress-checkout',
+                'nonce',
+                array(
+                    'load_addressbook' => wp_create_nonce('topdress-checkout-load-addressbook-nonce'),
                 )
             );
         }
@@ -185,5 +219,23 @@ class TOPDRESS_Woocommerce
         }
 
         return $replacements;
+    }
+
+    function custom_fields($fields)
+    {
+        $fields['shipping']['shipping_tag']['placeholder'] = 'e.g: Home, Office, Customer, ...';
+        $fields['shipping']['shipping_tag']['label'] = 'Address Tag';
+        $fields['shipping']['shipping_tag']['class'] = array('form-row-wide');
+        $fields['shipping']['shipping_tag']['priority'] = 110;
+
+        return $fields;
+    }
+
+    public function save_fields($order_id)
+    {
+        if (isset($_POST['shipping_tag'])) {
+            $tag = sanitize_text_field(wp_unslash($_POST['shipping_tag']));   // WPCS: Input var okay, CSRF ok.
+            update_post_meta($order_id, '_topdress_address_tag', $tag);
+        }
     }
 }

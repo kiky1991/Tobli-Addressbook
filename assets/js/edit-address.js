@@ -99,6 +99,5 @@ jQuery(function ($) {
     $(document).on('ready', function () {
         $("span.select2").removeAttr('style');
         $("span.select2").css('width:100%! important;');
-        $('#table-addressbook').DataTable();
     });
 });
