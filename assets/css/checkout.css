@@ -104,3 +104,9 @@ ul.topdress-list-addressbook li {
 ul.topdress-list-addressbook li:hover {
     border: 2px solid #cfcfcf;
 }
+
+ul>li.topdress-load-more {
+    font-weight: bold;
+    text-align: center;
+    border: 2px solid #cfcfcf;
+}

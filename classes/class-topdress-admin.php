@@ -55,6 +55,7 @@ if (!class_exists('TOPDRESS_Admin')) {
         {
             if ($this->validate_screen('shop_order')) {
                 wp_enqueue_style('topdress-shop-order', TOPDRESS_PLUGIN_URI . '/assets/css/shop-order.css', '', TOPDRESS_VERSION);
+                wp_enqueue_script('topdrop-shop-order', TOPDRESS_PLUGIN_URI . '/assets/js/shop-order.js', array('jquery'), TOPDRESS_VERSION, true);
             }
 
             if ($this->validate_screen('users_page_topdress-address-book')) {

@@ -12,6 +12,7 @@ $hidden = ['id_user', 'address_2', 'created_at', 'updated_at'];
                 <?php esc_html_e($address['phone']); ?> - <b><?php esc_html_e($address['tag']); ?></b><br />
             </li>
         <?php endforeach; ?>
+        <li class="topdress-load-more"><?php esc_html_e('Load More', 'topdress'); ?></li>
     </ul>
 <?php else : ?>
     <p class=""><?php esc_html_e('Addressbook empty!', 'topdress'); ?></p>

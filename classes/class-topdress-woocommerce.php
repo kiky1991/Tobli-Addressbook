@@ -237,5 +237,44 @@ class TOPDRESS_Woocommerce
             $tag = sanitize_text_field(wp_unslash($_POST['shipping_tag']));   // WPCS: Input var okay, CSRF ok.
             update_post_meta($order_id, '_topdress_address_tag', $tag);
         }
+
+        if (isset($_POST['shipping_district'])) {
+            $district = sanitize_text_field(wp_unslash($_POST['shipping_district']));   // WPCS: Input var okay, CSRF ok.
+
+            $user_id = get_current_user_id();
+            $q = array(
+                'id_user'   => array(
+                    'separator' => '=',
+                    'value'     => $user_id
+                ),
+                'district_id'   => array(
+                    'separator' => '=',
+                    'value'     => $district
+                ),
+            );
+
+            $addresses = $this->core->list_addressbook($q);
+            if (is_array($addresses) && count($addresses) < 1) {
+                $data = array(
+                    'id_user'   => $user_id,
+                    'first_name' => isset($_POST['shipping_first_name']) ? sanitize_text_field(wp_unslash($_POST['shipping_first_name'])) : '',
+                    'last_name' => isset($_POST['shipping_last_name']) ? sanitize_text_field(wp_unslash($_POST['shipping_last_name'])) : '',
+                    'country' => isset($_POST['shipping_country']) ? sanitize_text_field(wp_unslash($_POST['shipping_country'])) : '',
+                    'state_id' => isset($_POST['shipping_state']) ? sanitize_text_field(wp_unslash($_POST['shipping_state'])) : 0,
+                    'state' => isset($_POST['shipping_state_name']) ? sanitize_text_field(wp_unslash($_POST['shipping_state_name'])) : '',
+                    'city_id' => isset($_POST['shipping_city']) ? sanitize_text_field(wp_unslash($_POST['shipping_city'])) : 0,
+                    'city' => isset($_POST['shipping_city_name']) ? sanitize_text_field(wp_unslash($_POST['shipping_city_name'])) : '',
+                    'district_id' => isset($_POST['shipping_district']) ? sanitize_text_field(wp_unslash($_POST['shipping_district'])) : 0,
+                    'district' => isset($_POST['shipping_district_name']) ? sanitize_text_field(wp_unslash($_POST['shipping_district_name'])) : '',
+                    'address_1' => isset($_POST['shipping_address_1']) ? sanitize_text_field(wp_unslash($_POST['shipping_address_1'])) : '',
+                    'address_2' => '',
+                    'phone' => isset($_POST['shipping_phone']) ? sanitize_text_field(wp_unslash($_POST['shipping_phone'])) : '',
+                    'postcode' => isset($_POST['shipping_postcode']) ? sanitize_text_field(wp_unslash($_POST['shipping_postcode'])) : 0,
+                    'tag' => isset($_POST['shipping_tag']) ? sanitize_text_field(wp_unslash($_POST['shipping_tag'])) : '',
+                );
+
+                $this->core->update_addressbook($data);
+            }
+        }
     }
 }
