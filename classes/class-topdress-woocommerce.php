@@ -223,10 +223,12 @@ class TOPDRESS_Woocommerce
 
     function custom_fields($fields)
     {
-        $fields['shipping']['shipping_tag']['placeholder'] = 'e.g: Home, Office, Customer, ...';
-        $fields['shipping']['shipping_tag']['label'] = 'Address Tag';
-        $fields['shipping']['shipping_tag']['class'] = array('form-row-wide');
-        $fields['shipping']['shipping_tag']['priority'] = 110;
+        if (is_user_logged_in()) {
+            $fields['shipping']['shipping_tag']['placeholder'] = 'e.g: Home, Office, Customer, ...';
+            $fields['shipping']['shipping_tag']['label'] = 'Address Tag';
+            $fields['shipping']['shipping_tag']['class'] = array('form-row-wide');
+            $fields['shipping']['shipping_tag']['priority'] = 110;
+        }
 
         return $fields;
     }
