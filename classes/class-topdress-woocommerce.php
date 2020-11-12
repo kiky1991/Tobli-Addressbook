@@ -223,11 +223,16 @@ class TOPDRESS_Woocommerce
 
     function custom_fields($fields)
     {
+        $fields['shipping']['shipping_phone']['label'] = 'Phone';
+        $fields['shipping']['shipping_phone']['required'] = true;
+        $fields['shipping']['shipping_phone']['class'] = array('form-row-wide');
+        $fields['shipping']['shipping_phone']['priority'] = 110;
+
         if (is_user_logged_in()) {
             $fields['shipping']['shipping_tag']['placeholder'] = 'e.g: Home, Office, Customer, ...';
             $fields['shipping']['shipping_tag']['label'] = 'Address Tag';
             $fields['shipping']['shipping_tag']['class'] = array('form-row-wide');
-            $fields['shipping']['shipping_tag']['priority'] = 110;
+            $fields['shipping']['shipping_tag']['priority'] = 120;
         }
 
         return $fields;
@@ -235,6 +240,10 @@ class TOPDRESS_Woocommerce
 
     public function save_fields($order_id)
     {
+        if (!is_user_logged_in()) {
+            return;
+        }
+
         if (isset($_POST['shipping_tag'])) {
             $tag = sanitize_text_field(wp_unslash($_POST['shipping_tag']));   // WPCS: Input var okay, CSRF ok.
             update_post_meta($order_id, '_topdress_address_tag', $tag);
