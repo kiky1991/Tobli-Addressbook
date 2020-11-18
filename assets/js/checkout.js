@@ -60,7 +60,6 @@ jQuery(function ($) {
 
     $(document).on('click', '#topdress_load_addressbook', function () {
         if (topdress.islogin) {
-            const search = $("<p class=\"form-row form-row-wide\"><input type=\"text\" id=\"search_addressbook\" name=\"search_addressbook\" placeholder=\"Search Address\" /></p>");
             $('.topdress-modal.topdress-popup').addClass('open');
             $('.topdress-modal-frame').html('<div class="topdress-loading"></div>');
 
@@ -73,7 +72,6 @@ jQuery(function ($) {
                 },
                 success: function (response) {
                     $('.topdress-modal-frame').html(response);
-                    $('.topdress-modal-frame').prepend(search);
                 }
             });
         }
