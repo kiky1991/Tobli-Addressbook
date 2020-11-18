@@ -1,5 +1,6 @@
 <?php
 $hidden = ['id_user', 'address_2', 'created_at', 'updated_at'];
+$page++;
 ?>
 
 <?php if (is_array($addresses) && count($addresses)) : ?>
@@ -12,7 +13,7 @@ $hidden = ['id_user', 'address_2', 'created_at', 'updated_at'];
                 <?php esc_html_e($address['phone']); ?> - <b><?php esc_html_e($address['tag']); ?></b><br />
             </li>
         <?php endforeach; ?>
-        <li class="topdress-load-more"><?php esc_html_e('Load More', 'topdress'); ?></li>
+        <li class="topdress-load-more" page-id="<?php esc_attr_e($page) ?>"><?php esc_html_e('Load More', 'topdress'); ?></li>
     </ul>
 <?php else : ?>
     <p class=""><?php esc_html_e('Addressbook empty!', 'topdress'); ?></p>

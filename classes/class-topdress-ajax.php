@@ -246,15 +246,30 @@ class TOPDRESS_Ajax
     {
         check_ajax_referer('topdress-checkout-load-addressbook-nonce', 'topdress_checkout_load_addressbook_nonce');
 
+        $page = isset($_POST['page_id']) ? sanitize_text_field(wp_unslash($_POST['page_id'])) : 1;
+        $term = isset($_POST['term']) ? sanitize_text_field(wp_unslash($_POST['term'])) : '';
         $user_id = get_current_user_id();
-        $q = array(
-            'id_user'   => array(
-                'separator' => '=',
-                'value'     => $user_id
-            )
-        );
+        if (!empty($term)) {
+            $q = array(
+                'id_user'   => array(
+                    'separator' => '=',
+                    'value'     => $user_id
+                ),
+                'first_name' => array(
+                    'separator' => 'like',
+                    'value'     => "%{$term}%"
+                ),
+            );
+        } else {
+            $q = array(
+                'id_user'   => array(
+                    'separator' => '=',
+                    'value'     => $user_id
+                )
+            );
+        }
 
-        $addresses = $this->core->list_addressbook($q);
+        $addresses = $this->core->list_addressbook($q, 1, $page);
         if ($addresses) {
             ob_start();
             include_once TOPDRESS_PLUGIN_PATH . 'views/checkout-list-addressbook.php';

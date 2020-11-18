@@ -35,6 +35,10 @@ jQuery(function ($) {
     $(document).on('click', 'ul.topdress-list-addressbook li', function () {
         const $this = $(this);
 
+        if (!$this.attr('address-id_address')) { 
+            return;
+        }
+
         $('#shipping_first_name').val($this.attr('address-first_name'));
         $('#shipping_last_name').val($this.attr('address-last_name'));
         $('#shipping_country').val($this.attr('address-country'));
@@ -56,6 +60,7 @@ jQuery(function ($) {
 
     $(document).on('click', '#topdress_load_addressbook', function () {
         if (topdress.islogin) {
+            const search = $("<p class=\"form-row form-row-wide\"><input type=\"text\" id=\"search_addressbook\" name=\"search_addressbook\" placeholder=\"Search Address\" /></p>");
             $('.topdress-modal.topdress-popup').addClass('open');
             $('.topdress-modal-frame').html('<div class="topdress-loading"></div>');
 
@@ -68,6 +73,7 @@ jQuery(function ($) {
                 },
                 success: function (response) {
                     $('.topdress-modal-frame').html(response);
+                    $('.topdress-modal-frame').prepend(search);
                 }
             });
         }
@@ -75,5 +81,53 @@ jQuery(function ($) {
 
     $(document).on('click', '.topdress-close-modal', function () {
         $('.topdress-modal.topdress-popup').removeClass('open');
+    });
+
+    $(document).on('click', 'li.topdress-load-more', function () {
+        const page_id = $(this).attr('page-id');
+        const term = $('#search_addressbook').val();
+        const $this = $(this);
+        $this.prop('disabled',true);
+        $this.html('Loading..');
+
+        if (topdress.islogin) {
+            $.ajax({
+                type: 'POST',
+                url: topdress.url,
+                data: {
+                    term: term,
+                    page_id: page_id,
+                    action: 'topdress_checkout_load_addressbook',
+                    topdress_checkout_load_addressbook_nonce: nonce.load_addressbook
+                },
+                success: function (response) {
+                    $('.topdress-modal-frame').append(response);
+                    $this.closest('li').remove();
+                }
+            });
+        }
+    });
+
+    $(document).on('keyup', '#search_addressbook', function (e) {
+        const term = $(this).val();
+        const search = $("<p class=\"form-row form-row-wide\"><input type=\"text\" id=\"search_addressbook\" name=\"search_addressbook\" placeholder=\"Search Address\" /></p>");
+
+        if (term.length == 0 || term.length >= 3) {
+            $.ajax({
+                type: 'POST',
+                url: topdress.url,
+                data: {
+                    term: term,
+                    action: 'topdress_checkout_load_addressbook',
+                    topdress_checkout_load_addressbook_nonce: nonce.load_addressbook
+                },
+                success: function (response) {
+                    $('.topdress-modal-frame').html(response);
+                    $('.topdress-modal-frame').prepend(search);
+                }
+            });
+        }
+
+        e.preventDefault();
     });
 });

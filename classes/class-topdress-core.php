@@ -54,7 +54,7 @@ if (!class_exists('TOPDRESS_Core')) {
          * 
          * @return  array|bool    bool if false
          */
-        public function list_addressbook($query = array(), $limit = 10)
+        public function list_addressbook($query = array(), $limit = 10, $paged = 1)
         {
             global $wpdb;
             $table = $wpdb->prefix . 'topdress_address_book';
@@ -66,14 +66,19 @@ if (!class_exists('TOPDRESS_Core')) {
                     $dump[] = "{$key} {$value['separator']} '{$value['value']}'";
                 }
 
-                $where = "WHERE " . implode(' AND ', $dump);
+                $where = "WHERE " . implode(" AND ", $dump);
             }
 
+            $offset = ($limit * $paged) - $limit;
             return $wpdb->get_results(
-                "SELECT * FROM {$table}
-                    {$where}
-                    ORDER BY created_at ASC 
-                LIMIT {$limit}",
+                $wpdb->prepare(
+                    "SELECT * FROM $table
+                    $where
+                    ORDER BY created_at ASC
+                    LIMIT %d OFFSET %d",
+                    $limit,
+                    $offset
+                ),
                 ARRAY_A
             );
         }
