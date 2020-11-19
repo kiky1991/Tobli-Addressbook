@@ -14,7 +14,8 @@ class TOPDRESS_Woocommerce
         $this->core = new TOPDRESS_Core();
 
         add_action('init', array($this, 'add_pages'));
-        add_action('woocommerce_account_edit-address/add-addressbook_endpoint', array($this, 'endpoint_content'));
+        add_action('woocommerce_account_edit-address/add-addressbook_endpoint', array($this, 'endpoint_content_add_addressbook'));
+        add_action('woocommerce_account_edit-address/edit-addressbook_endpoint', array($this, 'endpoint_content_edit_addressbook'));
         add_action("wp_enqueue_scripts", array($this, 'register_assets'));
         add_filter('woocommerce_order_get_formatted_shipping_address', array($this, 'change_address'), 10, 3);
         add_action('woocommerce_after_edit_account_address_form', array($this, 'table_address'), 10, 1);
@@ -30,13 +31,26 @@ class TOPDRESS_Woocommerce
     public function add_pages()
     {
         add_rewrite_endpoint('edit-address/add-addressbook', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('edit-address/edit-addressbook', EP_ROOT | EP_PAGES);
         flush_rewrite_rules();
     }
 
-    public function endpoint_content()
+    public function endpoint_content_add_addressbook()
     {
         $form = new TOPDRESS_Form();
         include_once TOPDRESS_PLUGIN_PATH . 'views/my-account-add-addressbook.php';
+    }
+
+    public function endpoint_content_edit_addressbook()
+    {
+        if (!isset($_GET['id']) || !$addresses = $this->core->is_addressbook($_GET['id'])) {
+            echo "<p>no found what you looking for.</p>";
+            return;
+        }
+
+        $form = new TOPDRESS_Form();
+        $address = $addresses[0];
+        include_once TOPDRESS_PLUGIN_PATH . 'views/my-account-edit-addressbook.php';
     }
 
     /**

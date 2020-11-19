@@ -19,7 +19,7 @@
                         <td><?php esc_html_e($address['district']); ?></td>
                         <td><?php esc_html_e($address['city']); ?></td>
                         <td><?php esc_html_e($address['tag']); ?></td>
-                        <td>[Edit]&nbsp;
+                        <td><a href="<?php echo wc_get_page_permalink('myaccount') . 'edit-address/edit-addressbook?id=' . $address['id_address'] ?>">[edit]</a>&nbsp;
                             <a id="delete-address-book" address-id="<?php esc_attr_e($address['id_address']); ?>">[Delete]</a>&nbsp;
                             <?php if ($address_id !== $address['id_address']) : ?>
                                 <a id="set-address-book" address-id="<?php esc_attr_e($address['id_address']); ?>">[Set as default]</a>

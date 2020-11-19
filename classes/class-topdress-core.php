@@ -84,6 +84,34 @@ if (!class_exists('TOPDRESS_Core')) {
         }
 
         /**
+         * TOPDRESS_Core::is_addressbook
+         * 
+         * Check is addressbook
+         * 
+         * @return  bool    bool if false
+         */
+        public function is_addressbook($id)
+        {
+            if (intval($id) < 1) {
+                return false;
+            }
+
+            $q = array(
+                'id_address'   => array(
+                    'separator' => '=',
+                    'value'     => intval($id)
+                )
+            );
+
+            $result = $this->list_addressbook($q, 1);
+            if ($result && $result[0]['id_user'] == get_current_user_id()) {
+                return $result;
+            }
+
+            return false;
+        }
+
+        /**
          * TOPDRESS_Core::update_addressbook
          * 
          * Get addressbook

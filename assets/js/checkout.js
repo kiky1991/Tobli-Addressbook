@@ -125,6 +125,7 @@ jQuery(function ($) {
                 },
                 success: function (response) {
                     $('.topdress-list-addressbook').html(response);
+                    $this.closest('li').remove();
                 }
             });
         }

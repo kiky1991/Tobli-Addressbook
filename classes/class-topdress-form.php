@@ -12,6 +12,7 @@ class TOPDRESS_Form
      */
     public function __construct()
     {
+        $this->core = new TOPDRESS_Core();
     }
 
     /**
@@ -97,7 +98,7 @@ class TOPDRESS_Form
                     'placeholder' => __('Select District', 'topdress'),
                     'required'    => true,
                     'class'       => array('form-row-wide', 'update_totals_on_change', 'address-field', 'init-select2'),
-                    'options'   => array('kalsd'),
+                    'options'   => array('' => __('Select District', 'pok')),
                 ),
                 'value' => ''
             ),
@@ -143,6 +144,33 @@ class TOPDRESS_Form
                 'value' => ''
             ),
         ));
+    }
+
+    public function form_edit_addressbook()
+    {
+        $id = sanitize_text_field(wp_slash($_GET['id']));
+        $q = array(
+            'id_address'   => array(
+                'separator' => '=',
+                'value'     => intval($id)
+            )
+        );
+
+        $result = $this->core->list_addressbook($q, 1);
+        $address = $result[0];
+        $form = $this->form_new_addressbook();
+        $form['first_name']['value'] = $address['first_name'];
+        $form['last_name']['value'] = $address['last_name'];
+        $form['country']['value'] = $address['country'];
+        $form['shipping_state']['value'] = $address['state_id'];
+        $form['shipping_city']['value'] = $address['city_id'];
+        $form['shipping_district']['value'] = $address['district_id'];
+        $form['address_1']['value'] = $address['address_1'];
+        $form['phone']['value'] = $address['phone'];
+        $form['postcode']['value'] = $address['postcode'];
+        $form['tag']['value'] = $address['tag'];
+
+        return $form;
     }
 
     /**
