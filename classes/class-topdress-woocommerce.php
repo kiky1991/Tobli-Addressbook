@@ -20,6 +20,7 @@ class TOPDRESS_Woocommerce
         add_filter('woocommerce_order_get_formatted_shipping_address', array($this, 'change_address'), 10, 3);
         add_action('woocommerce_after_edit_account_address_form', array($this, 'table_address'), 10, 1);
         add_action('template_redirect', array($this, 'save_address'));
+        add_action('template_redirect', array($this, 'edit_address'));
         add_filter('woocommerce_checkout_fields', array($this, 'custom_fields'), 999, 1);
         add_action('woocommerce_checkout_update_order_meta', array($this, 'save_fields'));
 
@@ -211,6 +212,89 @@ class TOPDRESS_Woocommerce
         }
 
         wp_safe_redirect(wc_get_page_permalink('myaccount') . 'edit-address/add-addressbook');
+        exit;
+    }
+
+    /**
+     * TOPDRESS_Woocommerce::edit_address
+     * 
+     * Edit address form
+     * @access  public
+     * 
+     * @return  html
+     */
+    public function edit_address()
+    {
+        $nonce_value = wc_get_var($_REQUEST['topdress_edit_address_nonce'], wc_get_var($_REQUEST['_wpnonce'], '')); // @codingStandardsIgnoreLine.
+
+        if (!wp_verify_nonce($nonce_value, 'topdress_edit_address')) {
+            return;
+        }
+
+        if (empty($_POST['action']) || 'topdress_edit_address' !== $_POST['action']) {
+            return;
+        }
+
+        wc_nocache_headers();
+
+        if (!isset($_POST['id_address']) || !$this->core->is_addressbook($_POST['id_address'])) {
+            return;
+        }
+
+        $required = [
+            'first_name' => 'First Name',
+            'last_name' => 'Last Name',
+            'shipping_state_name' => 'State Name',
+            'shipping_state' => 'State ID',
+            'shipping_city_name' => 'City Name',
+            'shipping_city' => 'City ID',
+            'shipping_district_name' => 'District Name',
+            'shipping_district' => 'District ID',
+            'address_1' => 'Address',
+            'phone' => 'Phone',
+            'postcode' => 'Post Code',
+            'tag' => 'Tag Address'
+        ];
+        $errors = array();
+        foreach (array_keys($_POST) as $post) {
+            if (empty($_POST[$post]) && in_array($post, array_keys($required))) {
+                $errors[] = $required[$post];
+            }
+        }
+
+        if (!empty($errors)) {
+            wc_add_notice(__(implode(', ', $errors) . ' is a required field', 'topdress'), 'error');
+            wp_safe_redirect(wc_get_page_permalink('myaccount') . 'edit-address/edit-addressbook?id=' . $_POST['id_address']);
+            exit;
+        }
+
+        $data = array(
+            'id_user'   => get_current_user_id(),
+            'id_address' => sanitize_text_field(wp_unslash($_POST['id_address'])),
+            'first_name' => sanitize_text_field(wp_unslash($_POST['first_name'])),
+            'last_name' => sanitize_text_field(wp_unslash($_POST['last_name'])),
+            'country' => sanitize_text_field(wp_unslash($_POST['country'])),
+            'state_id' => sanitize_text_field(wp_unslash($_POST['shipping_state'])),
+            'state' => sanitize_text_field(wp_unslash($_POST['shipping_state_name'])),
+            'city_id' => sanitize_text_field(wp_unslash($_POST['shipping_city'])),
+            'city' => sanitize_text_field(wp_unslash($_POST['shipping_city_name'])),
+            'district_id' => sanitize_text_field(wp_unslash($_POST['shipping_district'])),
+            'district' => sanitize_text_field(wp_unslash($_POST['shipping_district_name'])),
+            'address_1' => sanitize_text_field(wp_unslash($_POST['address_1'])),
+            'address_2' => '',
+            'phone' => sanitize_text_field(wp_unslash($_POST['phone'])),
+            'postcode' => sanitize_text_field(wp_unslash($_POST['postcode'])),
+            'tag' => sanitize_text_field(wp_unslash($_POST['tag'])),
+        );
+
+        $result = $this->core->update_addressbook($data, true);
+        if ($result) {
+            wc_add_notice(__('Shipping address has been edit.', 'topdress'));
+        } else {
+            wc_add_notice(__('Cannot edit shipping address, call your administrator.', 'topdress'), 'error');
+        }
+
+        wp_safe_redirect(wc_get_page_permalink('myaccount') . 'edit-address/edit-addressbook?id=' . $_POST['id_address']);
         exit;
     }
 

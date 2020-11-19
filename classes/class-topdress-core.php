@@ -153,17 +153,24 @@ if (!class_exists('TOPDRESS_Core')) {
                     return $wpdb->update(
                         $table,
                         array(
-                            'amount'        => $data['amount'],
-                            'bank'          => $data['bank'],
-                            'status'        => $data['status'],
-                            'img'           => $data['img'],
-                            'note'          => $data['reason'],
-                            'ip_user'       => $this->helper->get_the_user_ip(),
-                            'updated_at'    => date('Y-m-d H:i:s')
+                            'id_user'   => $data['id_user'],
+                            'first_name'   => $data['first_name'],
+                            'last_name'    => $data['last_name'],
+                            'country'      => $data['country'],
+                            'state_id'    => $data['state_id'],
+                            'state'       => $data['state'],
+                            'city_id'      => $data['city_id'],
+                            'city'      => $data['city'],
+                            'district_id'      => $data['district_id'],
+                            'district'      => $data['district'],
+                            'address_1'      => $data['address_1'],
+                            'address_2'      => $data['address_2'],
+                            'phone'      => $data['phone'],
+                            'postcode'      => $data['postcode'],
+                            'tag'      => $data['tag'],
                         ),
                         array(
-                            'id_user'   => $data['id_user'],
-                            'id_topup'  => $data['id_topup'],
+                            'id_address'   => $data['id_address']
                         )
                     );
                 } catch (Exception $e) {

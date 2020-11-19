@@ -6,14 +6,14 @@
     <div class="woocommerce-address-fields">
         <div class="woocommerce-address-fields__field-wrapper-pok">
             <?php $form->get_fields('form_edit_addressbook'); ?>
-            <input type="hidden" name="id_address" id="id_address" value="<?php $address['id_address']; ?>">
-            <input type="hidden" name="shipping_state_name" id="shipping_state_name" value="<?php $address['state']; ?>">
-            <input type="hidden" name="shipping_city_name" id="shipping_city_name" value="<?php $address['city']; ?>">
-            <input type="hidden" name="shipping_district_name" id="shipping_district_name" value="<?php $address['district']; ?>">
+            <input type="hidden" name="id_address" id="id_address" value="<?php esc_attr_e($address['id_address']); ?>">
+            <input type="hidden" name="shipping_state_name" id="shipping_state_name" value="<?php esc_attr_e($address['state']); ?>">
+            <input type="hidden" name="shipping_city_name" id="shipping_city_name" value="<?php esc_attr_e($address['city']); ?>">
+            <input type="hidden" name="shipping_district_name" id="shipping_district_name" value="<?php esc_attr_e($address['district']); ?>">
         </div>
         <p class="submit">
             <?php wp_nonce_field('topdress_edit_address', 'topdress_edit_address_nonce'); ?>
-            <input type="submit" name="topdress_submit_address" class="woocommerce-button button" value="<?php esc_attr_e('Save', 'topdress'); ?>">
+            <input type="submit" name="topdress_submit_address" class="woocommerce-button button" value="<?php esc_attr_e('Edut Address', 'topdress'); ?>">
             <input type="hidden" name="action" value="topdress_edit_address" />
         </p>
     </div>
