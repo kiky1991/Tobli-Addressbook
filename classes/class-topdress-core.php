@@ -60,7 +60,7 @@ if (!class_exists('TOPDRESS_Core')) {
             $table = $wpdb->prefix . 'topdress_address_book';
 
             $where = '';
-            if (count($query)) {
+            if (count($query) > 0) {
                 $dump = array();
                 foreach ($query as $key => $value) {
                     $dump[] = "{$key} {$value['separator']} '{$value['value']}'";

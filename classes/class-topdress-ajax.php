@@ -206,6 +206,7 @@ class TOPDRESS_Ajax
             wp_die(false);
         }
 
+        $page = isset($_POST['page_id']) ? sanitize_text_field(wp_unslash($_POST['page_id'])) : 1;
         $term = sanitize_text_field(wp_unslash($_POST['term']));
         if (!empty($term) && strlen($term) < 3) {
             wp_die(false);
@@ -233,12 +234,18 @@ class TOPDRESS_Ajax
         }
 
         $address_id = get_user_meta($user_id, 'topdress_address_id', true);
-        $addresses = $this->core->list_addressbook($q);
-        ob_start();
-        include_once TOPDRESS_PLUGIN_PATH . 'views/table-list-address-book.php';
-        $content = ob_get_contents();
-        ob_end_clean();
-        echo $content;
+        $addresses = $this->core->list_addressbook($q, 1);
+
+        if (!empty($addresses)) {
+            ob_start();
+            include_once TOPDRESS_PLUGIN_PATH . 'views/checkout-li-addressbook.php';
+            $content = ob_get_contents();
+            ob_end_clean();
+            echo $content;
+        } else {
+            echo '<p class="">Addressbook is empty!</p>';
+        }
+
         wp_die();
     }
 
@@ -248,6 +255,7 @@ class TOPDRESS_Ajax
 
         $page = isset($_POST['page_id']) ? sanitize_text_field(wp_unslash($_POST['page_id'])) : 1;
         $term = isset($_POST['term']) ? sanitize_text_field(wp_unslash($_POST['term'])) : '';
+        $load_more = isset($_POST['more']) ? sanitize_text_field(wp_unslash($_POST['more'])) : 0;
         $user_id = get_current_user_id();
         if (!empty($term)) {
             $q = array(
@@ -270,7 +278,13 @@ class TOPDRESS_Ajax
         }
 
         $addresses = $this->core->list_addressbook($q, 1, $page);
-        if ($addresses) {
+        if ($addresses && $load_more == 1) {
+            ob_start();
+            include_once TOPDRESS_PLUGIN_PATH . 'views/checkout-li-addressbook.php';
+            $content = ob_get_contents();
+            ob_end_clean();
+            echo $content;
+        } else {
             ob_start();
             include_once TOPDRESS_PLUGIN_PATH . 'views/checkout-list-addressbook.php';
             $content = ob_get_contents();

@@ -81,10 +81,10 @@ jQuery(function ($) {
         $('.topdress-modal.topdress-popup').removeClass('open');
     });
 
-    $(document).on('click', 'li.topdress-load-more', function () {
-        const page_id = $(this).attr('page-id');
-        const term = $('#search_addressbook').val();
-        const $this = $(this);
+    $(document).on('click', 'li.topdress-load-more', function (e) {
+        var page_id = $(this).attr('page-id');
+        var term = $('#search_addressbook').val();
+        var $this = $(this);
         $this.prop('disabled',true);
         $this.html('Loading..');
 
@@ -95,20 +95,24 @@ jQuery(function ($) {
                 data: {
                     term: term,
                     page_id: page_id,
+                    more: 1,
                     action: 'topdress_checkout_load_addressbook',
                     topdress_checkout_load_addressbook_nonce: nonce.load_addressbook
                 },
                 success: function (response) {
-                    $('.topdress-modal-frame').append(response);
-                    $this.closest('li').remove();
+                    if (response) {
+                        $('.topdress-list-addressbook').append(response);
+                        $this.closest('li').remove();
+                    }
                 }
             });
         }
+
+        e.preventDefault();
     });
 
     $(document).on('keyup', '#search_addressbook', function (e) {
         const term = $(this).val();
-        const search = $("<p class=\"form-row form-row-wide\"><input type=\"text\" id=\"search_addressbook\" name=\"search_addressbook\" placeholder=\"Search Address\" /></p>");
 
         if (term.length == 0 || term.length >= 3) {
             $.ajax({
@@ -116,12 +120,11 @@ jQuery(function ($) {
                 url: topdress.url,
                 data: {
                     term: term,
-                    action: 'topdress_checkout_load_addressbook',
-                    topdress_checkout_load_addressbook_nonce: nonce.load_addressbook
+                    action: 'topdress_search_address_term',
+                    topdress_search_term_nonce: nonce.search_addressbook
                 },
                 success: function (response) {
-                    $('.topdress-modal-frame').html(response);
-                    $('.topdress-modal-frame').prepend(search);
+                    $('.topdress-list-addressbook').html(response);
                 }
             });
         }

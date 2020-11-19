@@ -98,6 +98,7 @@ class TOPDRESS_Woocommerce
                 'nonce',
                 array(
                     'load_addressbook' => wp_create_nonce('topdress-checkout-load-addressbook-nonce'),
+                    'search_addressbook' => wp_create_nonce('topdress-search-address-term-nonce'),
                 )
             );
         }
