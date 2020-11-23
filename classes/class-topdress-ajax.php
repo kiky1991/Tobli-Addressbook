@@ -32,15 +32,12 @@ class TOPDRESS_Ajax
     public function addressbook_datatables()
     {
         check_ajax_referer('topdress-addressbook-datatables-nonce', 'addressbook_datatables_nonce');
-        header("Content-Type: application/json");
-        $request = $_GET;
-
         $columns = array(
             0 => 'checkbox',
         );
 
         $user_id = get_current_user_id();
-        if (!empty($request['search']['value'])) {
+        if (!empty($_POST['search']['value'])) {
             $q = array(
                 'id_user'   => array(
                     'separator' => '=',
@@ -48,7 +45,7 @@ class TOPDRESS_Ajax
                 ),
                 'first_name' => array(
                     'separator' => 'like',
-                    'value'     => "%" . sanitize_text_field($request['search']['value']) . "%",
+                    'value'     => "%" . sanitize_text_field($_POST['search']['value']) . "%",
                 ),
             );
         } else {
@@ -80,7 +77,7 @@ class TOPDRESS_Ajax
             }
 
             $json_data = array(
-                "draw" => intval($request['draw']),
+                "draw" => intval($_POST['draw']),
                 "recordsTotal" => intval(count($addresses)),
                 "recordsFiltered" => intval(count($addresses)),
                 "data" => $data

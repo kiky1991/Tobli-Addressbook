@@ -79,7 +79,6 @@ class TOPDRESS_Woocommerce
                 'topdress',
                 array(
                     'url' => admin_url('admin-ajax.php'),
-                    'datatable' => admin_url('admin-ajax.php?action=topdress_addressbook_datatables&addressbook_datatables_nonce=' . wp_create_nonce('topdress-addressbook-datatables-nonce')),
                 )
             );
             wp_localize_script(
@@ -89,6 +88,7 @@ class TOPDRESS_Woocommerce
                     'delete' => wp_create_nonce('topdress-delete-address-nonce'),
                     'set_default' => wp_create_nonce('topdress-set-default-address-nonce'),
                     'search_term' => wp_create_nonce('topdress-search-address-term-nonce'),
+                    'datatable' => wp_create_nonce('topdress-addressbook-datatables-nonce')
                 )
             );
         }

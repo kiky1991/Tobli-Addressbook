@@ -1,4 +1,4 @@
-<table id="topdress_addressbook_table" class="table table-striped table-hover">
+<table id="topdress_addressbook_table" class="table table-striped table-hover display select">
     <thead>
         <tr>
             <th><input name="select_all" value="1" type="checkbox"></th>

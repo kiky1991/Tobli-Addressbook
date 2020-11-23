@@ -38,7 +38,7 @@ jQuery(function ($) {
                 topdress_delete_nonce: nonce.delete
             },
             success: function (response) {
-                $('.table-list-address-book').html(response);
+                $('#topdress_addressbook_table input[type=search]').keyup('');
             }
         });
     });
@@ -104,7 +104,14 @@ jQuery(function ($) {
         var table = $('#topdress_addressbook_table').dataTable({
             "processing": true,
             "serverSide": true,
-            "ajax": topdress.datatable,
+            "ajax": {
+                url: topdress.url,
+                type: "POST",
+                data: {
+                    action: 'topdress_addressbook_datatables',
+                    addressbook_datatables_nonce: nonce.datatable
+                }
+            },
             "bLengthChange": false,
             "bInfo": false,
             "ordering": false,
