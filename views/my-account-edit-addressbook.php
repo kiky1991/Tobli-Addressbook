@@ -13,7 +13,7 @@
         </div>
         <p class="submit">
             <?php wp_nonce_field('topdress_edit_address', 'topdress_edit_address_nonce'); ?>
-            <input type="submit" name="topdress_submit_address" class="woocommerce-button button" value="<?php esc_attr_e('Edut Address', 'topdress'); ?>">
+            <input type="submit" name="topdress_submit_address" class="woocommerce-button button" value="<?php esc_attr_e('Edit Address', 'topdress'); ?>">
             <input type="hidden" name="action" value="topdress_edit_address" />
         </p>
     </div>

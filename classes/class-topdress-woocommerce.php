@@ -64,6 +64,14 @@ class TOPDRESS_Woocommerce
     public function register_assets()
     {
         if (is_wc_endpoint_url('edit-address') || wc_get_page_permalink('myaccount') . 'edit-address/add-addressbook') {
+            wp_register_script('datatables', 'https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js', array('jquery'), true);
+            wp_register_script('datatables_bootstrap', 'https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js', array('jquery'), true);
+            wp_register_style('bootstrap_style', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css');
+            wp_register_style('datatables_style', 'https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css');
+            wp_enqueue_script('datatables');
+            wp_enqueue_script('datatables_bootstrap');
+            wp_enqueue_style('bootstrap_style');
+            wp_enqueue_style('datatables_style');
             wp_enqueue_style('topdress-edit-address', TOPDRESS_PLUGIN_URI . '/assets/css/edit-address.css', '', TOPDRESS_VERSION);
             wp_enqueue_script('topdress-edit-address', TOPDRESS_PLUGIN_URI . "/assets/js/edit-address.js", array('jquery'), TOPDRESS_VERSION, true);
             wp_localize_script(
@@ -71,7 +79,7 @@ class TOPDRESS_Woocommerce
                 'topdress',
                 array(
                     'url' => admin_url('admin-ajax.php'),
-
+                    'datatable' => admin_url('admin-ajax.php?action=topdress_addressbook_datatables&addressbook_datatables_nonce=' . wp_create_nonce('topdress-addressbook-datatables-nonce')),
                 )
             );
             wp_localize_script(

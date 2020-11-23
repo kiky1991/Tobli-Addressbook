@@ -14,12 +14,84 @@ class TOPDRESS_Ajax
         $this->core = new TOPDRESS_Core();
         $this->helper = new TOPDRESS_Helper();
 
+        add_action('wp_ajax_topdress_addressbook_datatables', array($this, 'addressbook_datatables'));
         add_action('wp_ajax_topdress_search_customer', array($this, 'search_customer'));
         add_action('wp_ajax_topdress_view_address', array($this, 'view_address'));
         add_action('wp_ajax_topdress_delete_address', array($this, 'delete_address'));
         add_action('wp_ajax_topdress_set_default_address', array($this, 'set_default_address'));
         add_action('wp_ajax_topdress_search_address_term', array($this, 'search_address_term'));
         add_action('wp_ajax_topdress_checkout_load_addressbook', array($this, 'checkout_load_addressbook'));
+    }
+
+    /**
+     * TOPDRESS_Ajax::addressbook_datatables
+     * 
+     * List addressbook datatables
+     * @return   json
+     */
+    public function addressbook_datatables()
+    {
+        check_ajax_referer('topdress-addressbook-datatables-nonce', 'addressbook_datatables_nonce');
+        header("Content-Type: application/json");
+        $request = $_GET;
+
+        $columns = array(
+            0 => 'checkbox',
+        );
+
+        $user_id = get_current_user_id();
+        if (!empty($request['search']['value'])) {
+            $q = array(
+                'id_user'   => array(
+                    'separator' => '=',
+                    'value'     => $user_id
+                ),
+                'first_name' => array(
+                    'separator' => 'like',
+                    'value'     => "%" . sanitize_text_field($request['search']['value']) . "%",
+                ),
+            );
+        } else {
+            $q = array(
+                'id_user'   => array(
+                    'separator' => '=',
+                    'value'     => $user_id
+                )
+            );
+        }
+        $addresses = $this->core->list_addressbook($q);
+        $address_id = get_user_meta($user_id, 'topdress_address_id', true);
+
+        if ($addresses) {
+            $data = array();
+            foreach ($addresses as $address) {
+                $set_default = ($address_id !== $address['id_address']) ? ('<a id="set-address-book" address-id="' . $address['id_address'] . '">[Set as default]</a>') : '';
+                $data[] = array(
+                    $address['id_address'],
+                    wp_sprintf('%1$s %2$s', __($address['first_name']), __($address['last_name'])),
+                    $address['phone'],
+                    $address['district'],
+                    $address['city'],
+                    $address['tag'],
+                    '<a href="' . wc_get_page_permalink('myaccount') . 'edit-address/edit-addressbook?id=' . $address['id_address'] . '">[edit]</a>' . '&nbsp;' .
+                        '<a id="delete-address-book" address-id="' . $address['id_address'] . '">[Delete]</a>&nbsp;' .
+                        $set_default
+                );
+            }
+
+            $json_data = array(
+                "draw" => intval($request['draw']),
+                "recordsTotal" => intval(count($addresses)),
+                "recordsFiltered" => intval(count($addresses)),
+                "data" => $data
+            );
+        } else {
+            $json_data = array(
+                "data" => array()
+            );
+        }
+
+        wp_send_json($json_data);
     }
 
     /**
