@@ -8,7 +8,6 @@
                 <div class="table-list-address-book wide">
                     <?php include_once TOPDRESS_PLUGIN_PATH . 'views/table-list-address-book.php'; ?>
                 </div>
-                <a href="<?php esc_attr_e(wc_get_page_permalink('myaccount') . 'edit-address/add-addressbook'); ?>" class="add">Add</a>
             </div>
         </div>
     </div>

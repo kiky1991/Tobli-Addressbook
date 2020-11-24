@@ -16,7 +16,8 @@
     cursor: pointer;
 }
 
-.topdress-head-table.left {
+.topdress-head-table.left,
+.topdress-toolbar {
     float: left;
 }
 

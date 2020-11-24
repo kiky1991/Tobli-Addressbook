@@ -38,8 +38,10 @@ class TOPDRESS_Woocommerce
 
     public function endpoint_content_add_addressbook()
     {
-        $form = new TOPDRESS_Form();
-        include_once TOPDRESS_PLUGIN_PATH . 'views/my-account-add-addressbook.php';
+        if (wc_get_page_permalink('myaccount') . 'edit-address/add-addressbook') {
+            $form = new TOPDRESS_Form();
+            include_once TOPDRESS_PLUGIN_PATH . 'views/my-account-add-addressbook.php';
+        }
     }
 
     public function endpoint_content_edit_addressbook()
@@ -63,7 +65,7 @@ class TOPDRESS_Woocommerce
      */
     public function register_assets()
     {
-        if (is_wc_endpoint_url('edit-address') || wc_get_page_permalink('myaccount') . 'edit-address/add-addressbook') {
+        if (is_wc_endpoint_url('edit-address')) {
             wp_register_script('datatables', 'https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js', array('jquery'), true);
             wp_register_script('datatables_bootstrap', 'https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js', array('jquery'), true);
             wp_register_style('bootstrap_style', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css');
@@ -72,6 +74,9 @@ class TOPDRESS_Woocommerce
             wp_enqueue_script('datatables_bootstrap');
             wp_enqueue_style('bootstrap_style');
             wp_enqueue_style('datatables_style');
+        }
+
+        if (is_wc_endpoint_url('edit-address') || wc_get_page_permalink('myaccount') . 'edit-address/add-addressbook') {
             wp_enqueue_style('topdress-edit-address', TOPDRESS_PLUGIN_URI . '/assets/css/edit-address.css', '', TOPDRESS_VERSION);
             wp_enqueue_script('topdress-edit-address', TOPDRESS_PLUGIN_URI . "/assets/js/edit-address.js", array('jquery'), TOPDRESS_VERSION, true);
             wp_localize_script(
@@ -79,6 +84,8 @@ class TOPDRESS_Woocommerce
                 'topdress',
                 array(
                     'url' => admin_url('admin-ajax.php'),
+                    'add_address' => '<a href="' . wc_get_page_permalink('myaccount') . 'edit-address/add-addressbook' . '" class="add">Add</a>',
+                    'delete_address' => '<a href="' . wp_nonce_url(wc_get_page_permalink('myaccount') . 'edit-address/remove-addressbook', 'actions') . '">Delete</a>',
                 )
             );
             wp_localize_script(

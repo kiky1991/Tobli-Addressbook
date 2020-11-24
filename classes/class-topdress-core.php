@@ -62,8 +62,15 @@ if (!class_exists('TOPDRESS_Core')) {
             $where = '';
             if (count($query) > 0) {
                 $dump = array();
+                $numeric = ['id_user', 'id_address'];
                 foreach ($query as $key => $value) {
-                    $dump[] = "{$key} {$value['separator']} '{$value['value']}'";
+                    if (!in_array($key, $numeric)) {
+                        $new_value = "'{$value['value']}'";
+                    } else {
+                        $new_value = intval($value['value']);
+                    }
+
+                    $dump[] = "{$key} {$value['separator']} {$new_value}";
                 }
 
                 $where = "WHERE " . implode(" AND ", $dump);
@@ -71,14 +78,10 @@ if (!class_exists('TOPDRESS_Core')) {
 
             $offset = ($limit * $paged) - $limit;
             return $wpdb->get_results(
-                $wpdb->prepare(
-                    "SELECT * FROM $table
+                "SELECT * FROM $table
                     $where
                     ORDER BY created_at ASC
-                    LIMIT %d OFFSET %d",
-                    $limit,
-                    $offset
-                ),
+                    LIMIT $limit OFFSET $offset",
                 ARRAY_A
             );
         }

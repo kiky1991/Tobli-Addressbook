@@ -102,6 +102,8 @@ jQuery(function ($) {
 
         var rows_selected = [];
         var table = $('#topdress_addressbook_table').dataTable({
+            "scrollY": true,
+            "dom": '<"topdress-toolbar">frtip',
             "processing": true,
             "serverSide": true,
             "ajax": {
@@ -135,6 +137,8 @@ jQuery(function ($) {
                 }
             }
         });
+
+        $("div.topdress-toolbar").html(topdress.add_address + ' | ' + topdress.delete_address);
 
         // Handle click on checkbox
         $('#topdress_addressbook_table tbody').on('click', 'input[type="checkbox"]', function (e) {
