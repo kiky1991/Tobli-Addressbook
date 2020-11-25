@@ -190,25 +190,13 @@ class TOPDRESS_Ajax
         $id_address = sanitize_text_field(wp_unslash($_POST['address_id']));
         $result = $this->core->delete_addressbook([$id_address]);
 
-        $user_id = get_current_user_id();
-        $q = array(
-            'id_user'   => array(
-                'separator' => '=',
-                'value'     => $user_id
+        wp_send_json(
+            array(
+                'success' => true,
+                'message' => 'OK',
+                'redirect' => wc_get_page_permalink('myaccount') . 'edit-address',
             )
         );
-
-        $address_id = get_user_meta($user_id, 'topdress_address_id', true);
-        $addresses = $this->core->list_addressbook($q);
-        if ($result) {
-            ob_start();
-            include_once TOPDRESS_PLUGIN_PATH . 'views/table-list-address-book.php';
-            $content = ob_get_contents();
-            ob_end_clean();
-            echo $content;
-        }
-
-        wp_die();
     }
 
     public function set_default_address()

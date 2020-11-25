@@ -38,7 +38,7 @@ jQuery(function ($) {
                 topdress_delete_nonce: nonce.delete
             },
             success: function (response) {
-                $('#topdress_addressbook_table input[type=search]').keyup('');
+                window.location.href = response.redirect;
             }
         });
     });
@@ -102,6 +102,7 @@ jQuery(function ($) {
 
         var rows_selected = [];
         var table = $('#topdress_addressbook_table').dataTable({
+            "select": true,
             "scrollY": true,
             "dom": '<"topdress-toolbar">frtip',
             "processing": true,
