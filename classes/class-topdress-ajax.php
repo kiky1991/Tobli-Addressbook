@@ -56,7 +56,12 @@ class TOPDRESS_Ajax
                 )
             );
         }
-        $addresses = $this->core->list_addressbook($q);
+
+
+        $limit = sanitize_text_field(wp_slash($_POST['length']));
+        $offset = sanitize_text_field(wp_slash($_POST['start']));
+        $addresses = $this->core->list_addressbook($q, $limit, $offset);
+        $total_address = $this->core->list_addressbook($q, 10000);
         $address_id = get_user_meta($user_id, 'topdress_address_id', true);
 
         if ($addresses) {
@@ -78,8 +83,8 @@ class TOPDRESS_Ajax
 
             $json_data = array(
                 "draw" => intval($_POST['draw']),
-                "recordsTotal" => intval(count($addresses)),
-                "recordsFiltered" => intval(count($addresses)),
+                "recordsTotal" => intval(count($total_address)),
+                "recordsFiltered" => intval(count($total_address)),
                 "data" => $data
             );
         } else {
@@ -334,7 +339,10 @@ class TOPDRESS_Ajax
             );
         }
 
-        $addresses = $this->core->list_addressbook($q, 1, $page);
+        $limit = 1;
+        $paged = 1;
+        $offset = ($limit * $paged) - $limit;
+        $addresses = $this->core->list_addressbook($q, $limit, $offset);
         if ($addresses && $load_more == 1) {
             ob_start();
             include_once TOPDRESS_PLUGIN_PATH . 'views/checkout-li-addressbook.php';

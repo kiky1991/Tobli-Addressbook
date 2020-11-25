@@ -54,7 +54,7 @@ if (!class_exists('TOPDRESS_Core')) {
          * 
          * @return  array|bool    bool if false
          */
-        public function list_addressbook($query = array(), $limit = 10, $paged = 1)
+        public function list_addressbook($query = array(), $limit = 10, $offset = 0)
         {
             global $wpdb;
             $table = $wpdb->prefix . 'topdress_address_book';
@@ -76,7 +76,6 @@ if (!class_exists('TOPDRESS_Core')) {
                 $where = "WHERE " . implode(" AND ", $dump);
             }
 
-            $offset = ($limit * $paged) - $limit;
             return $wpdb->get_results(
                 "SELECT * FROM $table
                     $where

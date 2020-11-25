@@ -158,7 +158,11 @@ class TOPDRESS_Woocommerce
 
         $user_id = get_current_user_id();
         $address_id = get_user_meta($user_id, 'topdress_address_id', true);
-        $addresses = $this->core->list_addressbook($q);
+
+        $limit = 10;
+        $paged = 1;
+        $offset = ($limit * $paged) - $limit;
+        $addresses = $this->core->list_addressbook($q, $limit, $offset);
         include_once TOPDRESS_PLUGIN_PATH . 'views/my-account-address.php';
     }
 

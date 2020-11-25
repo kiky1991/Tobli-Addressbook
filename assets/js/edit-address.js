@@ -107,6 +107,7 @@ jQuery(function ($) {
             "dom": '<"topdress-toolbar">frtip',
             "processing": true,
             "serverSide": true,
+            "pageLength": 2,
             "ajax": {
                 url: topdress.url,
                 type: "POST",
