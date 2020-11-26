@@ -107,7 +107,7 @@ jQuery(function ($) {
             "dom": '<"topdress-toolbar">frtip',
             "processing": true,
             "serverSide": true,
-            "pageLength": 2,
+            "pageLength": 10,
             "ajax": {
                 url: topdress.url,
                 type: "POST",
@@ -176,6 +176,15 @@ jQuery(function ($) {
             // Prevent click event from propagating to parent
             e.stopPropagation();
         });
+    });
+
+    $(document).on('click', '#bulk-delete-addressbook', function (e) {
+        var ids = $.map(table.rows('.selected').data(), function (item) {
+            return item[0]
+        });
+        console.log(ids)
+        alert(table.rows('.selected').data().length + ' row(s) selected');
+        e.preventDefault();
     });
 
     function updateDataTableSelectAllCtrl(table){

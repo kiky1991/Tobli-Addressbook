@@ -87,7 +87,7 @@ class TOPDRESS_Woocommerce
                 array(
                     'url' => admin_url('admin-ajax.php'),
                     'add_address' => '<a href="' . wc_get_page_permalink('myaccount') . 'edit-address/add-addressbook' . '" class="add">Add</a>',
-                    'delete_address' => '<a href="' . wp_nonce_url(wc_get_page_permalink('myaccount') . 'edit-address/remove-addressbook', 'actions') . '">Delete</a>',
+                    'delete_address' => '<a href="' . wp_nonce_url(wc_get_page_permalink('myaccount') . 'edit-address/remove-addressbook', 'actions') . '" id="bulk-delete-addressbook">Delete</a>',
                 )
             );
             wp_localize_script(

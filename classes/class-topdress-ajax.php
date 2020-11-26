@@ -340,9 +340,11 @@ class TOPDRESS_Ajax
         }
 
         $limit = 1;
-        $paged = 1;
-        $offset = ($limit * $paged) - $limit;
+        $offset = ($limit * $page) - $limit;
         $addresses = $this->core->list_addressbook($q, $limit, $offset);
+        $total = $this->core->list_addressbook($q, 10000);
+        $get_paged = ceil(count($total) / $limit) - $page; 
+
         if ($addresses && $load_more == 1) {
             ob_start();
             include_once TOPDRESS_PLUGIN_PATH . 'views/checkout-li-addressbook.php';
