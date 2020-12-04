@@ -32,9 +32,9 @@ jQuery(function ($) {
         $('#shipping_district_name').val($('#select2-shipping_district-container').attr('title'));
     });
 
-    $(document).on('click', 'ul.topdress-list-addressbook li', function () {
+    $(document).on('click', 'a#topdress-select-addressbook', function () {
         const $this = $(this);
-
+        
         if (!$this.attr('address-id_address')) { 
             return;
         }
@@ -71,7 +71,9 @@ jQuery(function ($) {
                     topdress_checkout_load_addressbook_nonce: nonce.load_addressbook
                 },
                 success: function (response) {
-                    $('.topdress-modal-frame').html(response);
+                    if (response) {
+                        $('.topdress-modal-frame').html(response);
+                    }
                 }
             });
         }
@@ -81,38 +83,8 @@ jQuery(function ($) {
         $('.topdress-modal.topdress-popup').removeClass('open');
     });
 
-    $(document).on('click', 'li.topdress-load-more', function (e) {
-        var page_id = $(this).attr('page-id');
-        var term = $('#search_addressbook').val();
-        var $this = $(this);
-        $this.prop('disabled',true);
-        $this.html('Loading..');
-
-        if (topdress.islogin) {
-            $.ajax({
-                type: 'POST',
-                url: topdress.url,
-                data: {
-                    term: term,
-                    page_id: page_id,
-                    more: 1,
-                    action: 'topdress_checkout_load_addressbook',
-                    topdress_checkout_load_addressbook_nonce: nonce.load_addressbook
-                },
-                success: function (response) {
-                    if (response) {
-                        $('.topdress-list-addressbook').append(response);
-                        $this.closest('li').remove();
-                    }
-                }
-            });
-        }
-
-        e.preventDefault();
-    });
-
-    $(document).on('keyup', '#search_addressbook', function (e) {
-        const term = $(this).val();
+    $(document).on('click', '#button-search-addressbook', function (e) {
+        const term = $('input#search_addressbook').val();
 
         if (term.length == 0 || term.length >= 3) {
             $.ajax({
@@ -124,8 +96,7 @@ jQuery(function ($) {
                     topdress_search_term_nonce: nonce.search_addressbook
                 },
                 success: function (response) {
-                    $('.topdress-list-addressbook').html(response);
-                    $this.closest('li').remove();
+                    $('.list-addressbook-body').html(response);
                 }
             });
         }

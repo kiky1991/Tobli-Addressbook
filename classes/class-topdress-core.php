@@ -79,7 +79,7 @@ if (!class_exists('TOPDRESS_Core')) {
             return $wpdb->get_results(
                 "SELECT * FROM $table
                     $where
-                    ORDER BY created_at ASC
+                    ORDER BY created_at DESC
                     LIMIT $limit OFFSET $offset",
                 ARRAY_A
             );

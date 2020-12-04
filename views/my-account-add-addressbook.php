@@ -1,3 +1,7 @@
+<?php
+$errors = get_user_meta(get_current_user_id(), 'error_field_addressbook', true);
+?>
+
 <div class="woocommerce-notices-wrapper"></div>
 
 <form method="post">
@@ -6,13 +10,13 @@
     <div class="woocommerce-address-fields">
         <div class="woocommerce-address-fields__field-wrapper-pok">
             <?php $form->get_fields('form_new_addressbook'); ?>
-            <input type="hidden" name="shipping_state_name" id="shipping_state_name">
-            <input type="hidden" name="shipping_city_name" id="shipping_city_name">
-            <input type="hidden" name="shipping_district_name" id="shipping_district_name">
+            <input type="hidden" name="shipping_state_name" id="shipping_state_name" value="<?php echo isset($errors['shipping_state_name']) ? $errors['shipping_state_name'] : '' ?>">
+            <input type="hidden" name="shipping_city_name" id="shipping_city_name" value="<?php echo isset($errors['shipping_city_name']) ? $errors['shipping_city_name'] : '' ?>">
+            <input type="hidden" name="shipping_district_name" id="shipping_district_name" value="<?php echo isset($errors['shipping_district_name']) ? $errors['shipping_district_name'] : '' ?>">
         </div>
         <p class="submit">
             <?php wp_nonce_field('topdress_save_address', 'topdress_save_address_nonce'); ?>
-            <input type="submit" name="topdress_submit_address" class="woocommerce-button button" value="<?php esc_attr_e('Save', 'topdress'); ?>">
+            <input type="submit" name="topdress_submit_new_address" class="woocommerce-button button" value="<?php esc_attr_e('Save', 'topdress'); ?>">
             <input type="hidden" name="action" value="topdress_save_address" />
         </p>
     </div>
@@ -28,6 +32,8 @@
             $('#shipping_state_name').val(state);
             $('#shipping_city_name').val(city);
             $('#shipping_district_name').val(district);
+
+            set_error();
         });
 
         $('#shipping_state').on('change', function() {
@@ -44,5 +50,22 @@
             const district = $('#select2-shipping_district-container').attr('title');
             $('#shipping_district_name').val(district);
         });
+
+        function set_error() {
+            <?php if (!empty($errors)) : ?>
+                $('#shipping_state').val('<?php echo $errors['shipping_state']; ?>').trigger('change');
+                $('#shipping_state_name').val('<?php echo $errors['shipping_state_name']; ?>');
+                $('#shipping_city').on('options_loaded', function(e) {
+                    $('#shipping_city').val('<?php echo $errors['shipping_city']; ?>').trigger('change');
+                    $('#shipping_city_name').val('<?php echo $errors['shipping_city_name']; ?>');
+                });
+                $('#shipping_district').on('options_loaded', function(e) {
+                    $('#shipping_district').val('<?php echo $errors['shipping_district']; ?>').trigger('change');
+                    $('#shipping_district_name').val('<?php echo $errors['shipping_district_name']; ?>');
+                });
+            <?php else: ?>
+                <?php echo 'return;'; ?>
+            <?php endif; ?>
+        }
     });
 </script>

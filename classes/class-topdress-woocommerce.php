@@ -18,11 +18,15 @@ class TOPDRESS_Woocommerce
         add_action('woocommerce_account_edit-address/edit-addressbook_endpoint', array($this, 'endpoint_content_edit_addressbook'));
         add_action("wp_enqueue_scripts", array($this, 'register_assets'));
         add_filter('woocommerce_order_get_formatted_shipping_address', array($this, 'change_address'), 10, 3);
-        add_action('woocommerce_after_edit_account_address_form', array($this, 'table_address'), 10, 1);
         add_action('template_redirect', array($this, 'save_address'));
         add_action('template_redirect', array($this, 'edit_address'));
         add_filter('woocommerce_checkout_fields', array($this, 'custom_fields'), 999, 1);
         add_action('woocommerce_checkout_update_order_meta', array($this, 'save_fields'));
+
+        // edit-address
+        // add_action('woocommerce_after_edit_account_address_form', array($this, 'table_address'), 50, 1);
+        add_filter('wc_get_template_part', array($this, 'override_woocommerce_template_part'), 10, 3);
+        add_filter('woocommerce_locate_template', array($this, 'override_woocommerce_template'), 10, 3);
 
         // my account
         add_filter('woocommerce_localisation_address_formats', array($this, 'my_account_address_localisation'), 50, 3);
@@ -86,8 +90,6 @@ class TOPDRESS_Woocommerce
                 'topdress',
                 array(
                     'url' => admin_url('admin-ajax.php'),
-                    'add_address' => '<a href="' . wc_get_page_permalink('myaccount') . 'edit-address/add-addressbook' . '" class="add">Add</a>',
-                    'delete_address' => '<a href="' . wp_nonce_url(wc_get_page_permalink('myaccount') . 'edit-address/remove-addressbook', 'actions') . '" id="bulk-delete-addressbook">Delete</a>',
                 )
             );
             wp_localize_script(
@@ -96,6 +98,7 @@ class TOPDRESS_Woocommerce
                 array(
                     'delete' => wp_create_nonce('topdress-delete-address-nonce'),
                     'set_default' => wp_create_nonce('topdress-set-default-address-nonce'),
+                    'bulk_delete_address' => wp_create_nonce('topdress-bulk-delete-address-nonce'),
                     'search_term' => wp_create_nonce('topdress-search-address-term-nonce'),
                     'datatable' => wp_create_nonce('topdress-addressbook-datatables-nonce')
                 )
@@ -193,7 +196,7 @@ class TOPDRESS_Woocommerce
             return;
         }
 
-        $required = ['first_name' => 'First Name', 'last_name' => 'Last Name', 'shipping_state' => 'State', 'shipping_city' => 'City', 'shipping_district' => 'District', 'address_1' => 'Address', 'phone' => 'Phone', 'postcode' => 'Post Code', 'tag' => 'Tag Address'];
+        $required = ['first_name' => 'First Name', 'last_name' => 'Last Name', 'shipping_state' => 'State', 'shipping_city' => 'City', 'shipping_district' => 'District', 'address_1' => 'Address', 'phone' => 'Phone'];
         $errors = array();
         foreach (array_keys($_POST) as $post) {
             if (empty($_POST[$post]) && in_array($post, array_keys($required))) {
@@ -203,7 +206,8 @@ class TOPDRESS_Woocommerce
 
         if (!empty($errors)) {
             wc_add_notice(__(implode(', ', $errors) . ' is a required field', 'topdress'), 'error');
-            wp_safe_redirect(wc_get_page_permalink('myaccount') . 'edit-address/add-addressbook');
+            update_user_meta(get_current_user_id(), 'error_field_addressbook', $_POST);
+            wp_safe_redirect(wc_get_endpoint_url('edit-address/add-addressbook', '', wc_get_page_permalink('myaccount')));
             exit;
         }
 
@@ -232,7 +236,7 @@ class TOPDRESS_Woocommerce
             wc_add_notice(__('Cannot save shipping address, call your administrator.', 'topdress'), 'error');
         }
 
-        wp_safe_redirect(wc_get_page_permalink('myaccount') . 'edit-address/add-addressbook');
+        wp_safe_redirect(wc_get_endpoint_url('edit-address/add-addressbook', '', wc_get_page_permalink('myaccount')));
         exit;
     }
 
@@ -317,6 +321,62 @@ class TOPDRESS_Woocommerce
 
         wp_safe_redirect(wc_get_page_permalink('myaccount') . 'edit-address/edit-addressbook?id=' . $_POST['id_address']);
         exit;
+    }
+
+    /**
+     * Template Part's
+     *
+     * @param  string $template Default template file path.
+     * @param  string $slug     Template file slug.
+     * @param  string $name     Template file name.
+     * @return string           Return the template part from plugin.
+     */
+    function override_woocommerce_template_part($template, $slug, $name)
+    {
+        // UNCOMMENT FOR @DEBUGGING
+        // echo '<pre>';
+        // echo 'template: ' . $template . '<br/>';
+        // echo 'slug: ' . $slug . '<br/>';
+        // echo 'name: ' . $name . '<br/>';
+        // echo '</pre>';
+        // Template directory.
+        // E.g. /wp-content/plugins/my-plugin/woocommerce/
+
+        $template_directory = TOPDRESS_PLUGIN_PATH . '/woocommerce/';
+        if ($name) {
+            $path = $template_directory . "{$slug}-{$name}.php";
+        } else {
+            $path = $template_directory . "{$slug}.php";
+        }
+        return file_exists($path) ? $path : $template;
+    }
+
+    /**
+     * Template File
+     *
+     * @param  string $template      Default template file  path.
+     * @param  string $template_name Template file name.
+     * @param  string $template_path Template file directory file path.
+     * @return string                Return the template file from plugin.
+     */
+    function override_woocommerce_template($template, $template_name, $template_path)
+    {
+        // UNCOMMENT FOR @DEBUGGING
+        // echo '<pre>';
+        // echo 'template: ' . $template . '<br/>';
+        // echo 'template_name: ' . $template_name . '<br/>';
+        // echo 'template_path: ' . $template_path . '<br/>';
+        // echo '</pre>';
+        // Template directory.
+        // E.g. /wp-content/plugins/my-plugin/woocommerce/
+
+        // var_dump($template);
+
+        $template_directory = TOPDRESS_PLUGIN_PATH . 'woocommerce/';
+        $path = $template_directory . $template_name;
+        // die($template_directory);
+        // file_exists($template_directory) ? die($path) : $template;
+        return file_exists($path) ? $path : $template;
     }
 
     public function my_account_address_localisation($formats)

@@ -18,6 +18,7 @@ class TOPDRESS_Ajax
         add_action('wp_ajax_topdress_search_customer', array($this, 'search_customer'));
         add_action('wp_ajax_topdress_view_address', array($this, 'view_address'));
         add_action('wp_ajax_topdress_delete_address', array($this, 'delete_address'));
+        add_action('wp_ajax_topdress_bulk_delete_address', array($this, 'bulk_delete_address'));
         add_action('wp_ajax_topdress_set_default_address', array($this, 'set_default_address'));
         add_action('wp_ajax_topdress_search_address_term', array($this, 'search_address_term'));
         add_action('wp_ajax_topdress_checkout_load_addressbook', array($this, 'checkout_load_addressbook'));
@@ -75,7 +76,7 @@ class TOPDRESS_Ajax
                     $address['district'],
                     $address['city'],
                     $address['tag'],
-                    '<a href="' . wc_get_page_permalink('myaccount') . 'edit-address/edit-addressbook?id=' . $address['id_address'] . '">[edit]</a>' . '&nbsp;' .
+                    '<a href="' . wc_get_endpoint_url('edit-address/edit-addressbook?id=' . $address['id_address'], '', wc_get_page_permalink('myaccount')) . '">[edit]</a>' . '&nbsp;' .
                         '<a id="delete-address-book" address-id="' . $address['id_address'] . '">[Delete]</a>&nbsp;' .
                         $set_default
                 );
@@ -199,7 +200,31 @@ class TOPDRESS_Ajax
             array(
                 'success' => true,
                 'message' => 'OK',
-                'redirect' => wc_get_page_permalink('myaccount') . 'edit-address',
+                'redirect' => wc_get_endpoint_url('edit-address', '', wc_get_page_permalink('myaccount')),
+            )
+        );
+    }
+
+    public function bulk_delete_address()
+    {
+        check_ajax_referer('topdress-bulk-delete-address-nonce', 'topdress_bulk_delete_address');
+
+        if (!isset($_POST['ids']) || empty($_POST['ids']) || !is_array($_POST['ids'])) {
+            wp_die(-1);
+        }
+
+        $ids = array();
+        foreach ($_POST['ids'] as $id) {
+            $ids[] = intval(sanitize_text_field($id));
+        }
+
+        $result = $this->core->delete_addressbook($ids);
+
+        wp_send_json(
+            array(
+                'success' => true,
+                'message' => 'OK',
+                'redirect' => wc_get_endpoint_url('edit-address', '', wc_get_page_permalink('myaccount')),
             )
         );
     }
@@ -300,7 +325,7 @@ class TOPDRESS_Ajax
 
         if (!empty($addresses)) {
             ob_start();
-            include_once TOPDRESS_PLUGIN_PATH . 'views/checkout-li-addressbook.php';
+            include_once TOPDRESS_PLUGIN_PATH . 'views/checkout-table-addressbook.php';
             $content = ob_get_contents();
             ob_end_clean();
             echo $content;
@@ -339,15 +364,15 @@ class TOPDRESS_Ajax
             );
         }
 
-        $limit = 1;
+        $limit = 5;
         $offset = ($limit * $page) - $limit;
         $addresses = $this->core->list_addressbook($q, $limit, $offset);
         $total = $this->core->list_addressbook($q, 10000);
-        $get_paged = ceil(count($total) / $limit) - $page; 
+        $get_paged = ceil(count($total) / $limit) - $page;
 
         if ($addresses && $load_more == 1) {
             ob_start();
-            include_once TOPDRESS_PLUGIN_PATH . 'views/checkout-li-addressbook.php';
+            include_once TOPDRESS_PLUGIN_PATH . 'views/checkout-table-addressbook.php';
             $content = ob_get_contents();
             ob_end_clean();
             echo $content;

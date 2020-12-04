@@ -30,7 +30,22 @@ class TOPDRESS_Form
         $default_country = $countries_obj->get_base_country();
         $default_county_states = $countries_obj->get_states($default_country);
 
+        $errors = get_user_meta(get_current_user_id(), 'error_field_addressbook', true);
+        if (!empty($errors)) {
+            delete_user_meta(get_current_user_id(), 'error_field_addressbook');
+        }
+
         return apply_filters('form_new_addressbook', array(
+            'tag' => array(
+                'field' => array(
+                    'type'        => 'text',
+                    'label'       => __('Tag', 'topdress'),
+                    'placeholder' => __('E.g: Home, Workplace, Customer, etc.', 'topdress'),
+                    'required'    => false,
+                    'class'       => array('form-row-wide')
+                ),
+                'value' => isset($errors['tag']) ? $errors['tag'] : ''
+            ),
             'first_name' => array(
                 'field' => array(
                     'type'        => 'text',
@@ -40,7 +55,7 @@ class TOPDRESS_Form
                     'class'       => array('form-row-first'),
                     'autocomplete' => 'given-name'
                 ),
-                'value' => ''
+                'value' => isset($errors['first_name']) ? $errors['first_name'] : ''
             ),
             'last_name' => array(
                 'field' => array(
@@ -51,7 +66,7 @@ class TOPDRESS_Form
                     'class'       => array('form-row-last'),
                     'autocomplete' => 'family-name'
                 ),
-                'value' => ''
+                'value' => isset($errors['last_name']) ? $errors['last_name'] : ''
             ),
             'country' => array(
                 'field' => array(
@@ -62,7 +77,7 @@ class TOPDRESS_Form
                     'class'       => array('form-row-wide', 'address-field', 'update_totals_on_change'),
                     'autocomplete' => 'country'
                 ),
-                'value' => ''
+                'value' => isset($errors['country']) ? $errors['country'] : ''
             ),
             'shipping_state' => array(
                 'field' => array(
@@ -89,7 +104,7 @@ class TOPDRESS_Form
                     'autocomplete' => 'address-level2',
                     'options'        => array('' => __('Select City', 'pok')),
                 ),
-                'value' => ''
+                'value' => isset($errors['shipping_city']) ? $errors['shipping_city'] : ''
             ),
             'shipping_district' => array(
                 'field' => array(
@@ -100,7 +115,7 @@ class TOPDRESS_Form
                     'class'       => array('form-row-wide', 'update_totals_on_change', 'address-field', 'init-select2'),
                     'options'   => array('' => __('Select District', 'pok')),
                 ),
-                'value' => ''
+                'value' => isset($errors['shipping_district']) ? $errors['shipping_district'] : ''
             ),
             'address_1' => array(
                 'field' => array(
@@ -110,7 +125,7 @@ class TOPDRESS_Form
                     'required'    => true,
                     'class'       => array('form-row', 'form-row-wide')
                 ),
-                'value' => ''
+                'value' => isset($errors['address_1']) ? $errors['address_1'] : ''
             ),
             'phone' => array(
                 'field' => array(
@@ -120,28 +135,18 @@ class TOPDRESS_Form
                     'required'    => true,
                     'class'       => array('form-row', 'form-row-last')
                 ),
-                'value' => ''
+                'value' => isset($errors['phone']) ? $errors['phone'] : ''
             ),
             'postcode' => array(
                 'field' => array(
                     'type'        => 'text',
                     'label'       => __('Postcode', 'topdrop'),
                     'placeholder' => __('', 'topdrop'),
-                    'required'    => true,
+                    'required'    => false,
                     'class'       => array('form-row', 'form-row-last'),
                     'validate'  => array('postcode')
                 ),
-                'value' => ''
-            ),
-            'tag' => array(
-                'field' => array(
-                    'type'        => 'text',
-                    'label'       => __('Tag', 'topdress'),
-                    'placeholder' => __('', 'topdress'),
-                    'required'    => true,
-                    'class'       => array('form-row-wide')
-                ),
-                'value' => ''
+                'value' => isset($errors['postcode']) ? $errors['postcode'] : ''
             ),
         ));
     }
