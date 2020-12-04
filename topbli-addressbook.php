@@ -4,7 +4,7 @@
  * Plugin Name:     Topbli Addressbook
  * Plugin URI:      https://www.cybersoftmedia.com
  * Description:     Topbli Addressbook is user dropship address database for topbli.com site
- * Version:         1.0.0
+ * Version:         1.0.1
  * Author:          Hengky ST
  * Author URI:      https://www.cybersoftmedia.com
  * License:         GPL
