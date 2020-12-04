@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 }
 
 // constants.
-define('TOPDRESS_VERSION', '1.0.0');
+define('TOPDRESS_VERSION', '1.0.1');
 define('TOPDRESS_DBVERSION', '1.0.0');
 define('TOPDRESS_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('TOPDRESS_PLUGIN_URI', plugins_url(basename(plugin_dir_path(__FILE__)), basename(__FILE__)));
