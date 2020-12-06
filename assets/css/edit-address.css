@@ -24,3 +24,15 @@
 .topdress-head-table.right {
     float: right;
 }
+
+a.topdress-addressbook-button {
+    padding: 5px;
+    font-size: 14px;
+    font-weight: normal;
+    background-color: red;
+    color: white;
+}
+
+a.topdress-addressbook-button:hover,a.topdress-addressbook-button:active {
+    color:white;
+}

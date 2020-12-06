@@ -58,7 +58,6 @@ class TOPDRESS_Ajax
             );
         }
 
-
         $limit = sanitize_text_field(wp_slash($_POST['length']));
         $offset = sanitize_text_field(wp_slash($_POST['start']));
         $addresses = $this->core->list_addressbook($q, $limit, $offset);
@@ -68,7 +67,7 @@ class TOPDRESS_Ajax
         if ($addresses) {
             $data = array();
             foreach ($addresses as $address) {
-                $set_default = ($address_id !== $address['id_address']) ? ('<a id="set-address-book" address-id="' . $address['id_address'] . '">[Set as default]</a>') : '';
+                $set_default = ($address_id !== $address['id_address']) ? ('<a class="btn small black" id="set-address-book" address-id="' . $address['id_address'] . '">Set as default</a>') : '';
                 $data[] = array(
                     $address['id_address'],
                     wp_sprintf('%1$s %2$s', __($address['first_name']), __($address['last_name'])),
@@ -76,8 +75,8 @@ class TOPDRESS_Ajax
                     $address['district'],
                     $address['city'],
                     $address['tag'],
-                    '<a href="' . wc_get_endpoint_url('edit-address/edit-addressbook?id=' . $address['id_address'], '', wc_get_page_permalink('myaccount')) . '">[edit]</a>' . '&nbsp;' .
-                        '<a id="delete-address-book" address-id="' . $address['id_address'] . '">[Delete]</a>&nbsp;' .
+                    '<a class="btn small black" href="' . wc_get_endpoint_url('edit-address/edit-addressbook?id=' . $address['id_address'], '', wc_get_page_permalink('myaccount')) . '">edit</a>' . '&nbsp;' .
+                        '<a class="btn small black" id="delete-address-book" address-id="' . $address['id_address'] . '">Delete</a>&nbsp;' .
                         $set_default
                 );
             }

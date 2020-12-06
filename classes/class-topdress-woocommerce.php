@@ -50,6 +50,8 @@ class TOPDRESS_Woocommerce
 
     public function endpoint_content_edit_addressbook()
     {
+        global $pok_helper;
+        
         if (!isset($_GET['id']) || !$addresses = $this->core->is_addressbook($_GET['id'])) {
             echo "<p>no found what you looking for.</p>";
             return;
@@ -409,10 +411,10 @@ class TOPDRESS_Woocommerce
         $fields['shipping']['shipping_phone']['priority'] = 110;
 
         if (is_user_logged_in()) {
-            $fields['shipping']['shipping_tag']['placeholder'] = 'e.g: Home, Office, Customer, ...';
+            $fields['shipping']['shipping_tag']['placeholder'] = 'E.g: Home, Workplace, Customer, etc.';
             $fields['shipping']['shipping_tag']['label'] = 'Address Tag';
             $fields['shipping']['shipping_tag']['class'] = array('form-row-wide');
-            $fields['shipping']['shipping_tag']['priority'] = 120;
+            $fields['shipping']['shipping_tag']['priority'] = 10;
         }
 
         return $fields;

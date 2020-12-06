@@ -25,6 +25,7 @@ class TOPDRESS_Form
     public function form_new_addressbook()
     {
         global $woocommerce;
+        global $pok_helper;
         $countries_obj   = new WC_Countries();
         $countries   = $countries_obj->__get('countries');
         $default_country = $countries_obj->get_base_country();
@@ -35,11 +36,68 @@ class TOPDRESS_Form
             delete_user_meta(get_current_user_id(), 'error_field_addressbook');
         }
 
-        return apply_filters('form_new_addressbook', array(
+        if (!$pok_helper->is_use_simple_address_field()) {
+            $shipping_field = array(
+                'shipping_state' => array(
+                    'field' => array(
+                        'type'        => 'state',
+                        'label'       => __('Province', 'topdress'),
+                        'placeholder' => __('Select Province', 'topdress'),
+                        'required'    => true,
+                        'class'       => array('form-row-wide', 'address-field', 'validate-required', 'init-select2'),
+                        'validate'    => array('state'),
+                        'autocomplete' => 'address-level1',
+                        'country_field' => 'shipping_country',
+                        'country'   => 'ID',
+                        'options' => $default_county_states
+                    ),
+                    'value' => 34
+                ),
+                'shipping_city' => array(
+                    'field' => array(
+                        'type'        => 'select',
+                        'label'       => __('City', 'topdress'),
+                        'placeholder' => __('Select City', 'topdress'),
+                        'required'    => true,
+                        'class'       => array('form-row-wide', 'address-field', 'validate-required', 'init-select2'),
+                        'autocomplete' => 'address-level2',
+                        'options'        => array('' => __('Select City', 'pok')),
+                    ),
+                    'value' => isset($errors['shipping_city']) ? $errors['shipping_city'] : ''
+                ),
+                'shipping_district' => array(
+                    'field' => array(
+                        'type'        => 'select',
+                        'label'       => __('District', 'topdress'),
+                        'placeholder' => __('Select District', 'topdress'),
+                        'required'    => true,
+                        'class'       => array('form-row-wide', 'update_totals_on_change', 'address-field', 'init-select2'),
+                        'options'   => array('' => __('Select District', 'pok')),
+                    ),
+                    'value' => isset($errors['shipping_district']) ? $errors['shipping_district'] : ''
+                ),
+            );
+        } else {
+            $shipping_field = array(
+                'shipping_simple_address' => array(
+                    'field' => array(
+                        'type'        => 'select',
+                        'label'       => __('Town / City', 'topdress'),
+                        'placeholder' => __('Search Town / City', 'topdress'),
+                        'required'    => true,
+                        'class'       => array('form-row-wide', 'update_totals_on_change', 'address-field', 'select2-ajax'),
+                        'options'   => array('' => __('Search Town / City', 'pok')),
+                    ),
+                    'value' => isset($errors['shipping_simple_address']) ? $errors['shipping_simple_address'] : ''
+                ),
+            );
+        }
+
+        $form_new_addressbook = array(
             'tag' => array(
                 'field' => array(
                     'type'        => 'text',
-                    'label'       => __('Tag', 'topdress'),
+                    'label'       => __('Tag Address', 'topdress'),
                     'placeholder' => __('E.g: Home, Workplace, Customer, etc.', 'topdress'),
                     'required'    => false,
                     'class'       => array('form-row-wide')
@@ -79,44 +137,6 @@ class TOPDRESS_Form
                 ),
                 'value' => isset($errors['country']) ? $errors['country'] : ''
             ),
-            'shipping_state' => array(
-                'field' => array(
-                    'type'        => 'state',
-                    'label'       => __('Province', 'topdress'),
-                    'placeholder' => __('Select Province', 'topdress'),
-                    'required'    => true,
-                    'class'       => array('form-row-wide', 'address-field', 'validate-required', 'init-select2'),
-                    'validate'    => array('state'),
-                    'autocomplete' => 'address-level1',
-                    'country_field' => 'shipping_country',
-                    'country'   => 'ID',
-                    'options' => $default_county_states
-                ),
-                'value' => 34
-            ),
-            'shipping_city' => array(
-                'field' => array(
-                    'type'        => 'select',
-                    'label'       => __('City', 'topdress'),
-                    'placeholder' => __('Select City', 'topdress'),
-                    'required'    => true,
-                    'class'       => array('form-row-wide', 'address-field', 'validate-required', 'init-select2'),
-                    'autocomplete' => 'address-level2',
-                    'options'        => array('' => __('Select City', 'pok')),
-                ),
-                'value' => isset($errors['shipping_city']) ? $errors['shipping_city'] : ''
-            ),
-            'shipping_district' => array(
-                'field' => array(
-                    'type'        => 'select',
-                    'label'       => __('District', 'topdress'),
-                    'placeholder' => __('Select District', 'topdress'),
-                    'required'    => true,
-                    'class'       => array('form-row-wide', 'update_totals_on_change', 'address-field', 'init-select2'),
-                    'options'   => array('' => __('Select District', 'pok')),
-                ),
-                'value' => isset($errors['shipping_district']) ? $errors['shipping_district'] : ''
-            ),
             'address_1' => array(
                 'field' => array(
                     'type'        => 'text',
@@ -148,11 +168,26 @@ class TOPDRESS_Form
                 ),
                 'value' => isset($errors['postcode']) ? $errors['postcode'] : ''
             ),
-        ));
+        );
+
+        $custom_fields = array();
+        foreach ($form_new_addressbook as $key => $value) {
+            if ($key == 'country') {
+                foreach ($shipping_field as $ship_key => $ship_value) {
+                    $custom_fields[$ship_key] = $ship_value;
+                }
+            }
+
+            $custom_fields[$key] = $value;
+        }
+
+        return apply_filters('form_new_addressbook', $custom_fields);
     }
 
     public function form_edit_addressbook()
     {
+        global $pok_helper;
+
         $id = sanitize_text_field(wp_slash($_GET['id']));
         $q = array(
             'id_address'   => array(
@@ -167,9 +202,15 @@ class TOPDRESS_Form
         $form['first_name']['value'] = $address['first_name'];
         $form['last_name']['value'] = $address['last_name'];
         $form['country']['value'] = $address['country'];
-        $form['shipping_state']['value'] = $address['state_id'];
-        $form['shipping_city']['value'] = $address['city_id'];
-        $form['shipping_district']['value'] = $address['district_id'];
+
+        if (!$pok_helper->is_use_simple_address_field()) {
+            $form['shipping_state']['value'] = $address['state_id'];
+            $form['shipping_city']['value'] = $address['city_id'];
+            $form['shipping_district']['value'] = $address['district_id'];
+        } else {
+            $form['shipping_simple_address']['value'] = '';
+        }
+
         $form['address_1']['value'] = $address['address_1'];
         $form['phone']['value'] = $address['phone'];
         $form['postcode']['value'] = $address['postcode'];

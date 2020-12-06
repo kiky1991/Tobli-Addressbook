@@ -61,11 +61,6 @@ $core_topdress = new TOPDRESS_Core();
 $addresses = $core_topdress->list_addressbook($q, $limit, $offset);
 ?>
 
-<p>
-	<?php echo apply_filters('woocommerce_my_account_my_address_description', esc_html__('This is replaced template by plugin tobli-addressbook.', 'woocommerce')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped 
-	?>
-</p>
-
 <?php if (!wc_ship_to_billing_address_only() && wc_shipping_enabled()) : ?>
 	<div class="u-columns woocommerce-Addresses col2-set addresses">
 	<?php endif; ?>
