@@ -87,6 +87,10 @@ class TOPDRESS_Form
                         'required'    => true,
                         'class'       => array('form-row-wide', 'update_totals_on_change', 'address-field', 'select2-ajax'),
                         'options'   => array('' => __('Search Town / City', 'pok')),
+                        'custom_attributes'	=> array(
+                            'data-action'	=> 'pok_search_simple_address',
+                            'data-nonce'	=> wp_create_nonce( 'search_city' )
+                        ),
                     ),
                     'value' => isset($errors['shipping_simple_address']) ? $errors['shipping_simple_address'] : ''
                 ),
@@ -100,7 +104,10 @@ class TOPDRESS_Form
                     'label'       => __('Tag Address', 'topdress'),
                     'placeholder' => __('E.g: Home, Workplace, Customer, etc.', 'topdress'),
                     'required'    => false,
-                    'class'       => array('form-row-wide')
+                    'class'       => array('form-row-wide'),
+                    'custom_attributes'	=> array(
+                        'tabindex'	=> 1
+                    ),
                 ),
                 'value' => isset($errors['tag']) ? $errors['tag'] : ''
             ),
@@ -111,7 +118,10 @@ class TOPDRESS_Form
                     'placeholder' => __('', 'topdress'),
                     'required'    => true,
                     'class'       => array('form-row-first'),
-                    'autocomplete' => 'given-name'
+                    'autocomplete' => 'given-name',
+                    'custom_attributes'	=> array(
+                        'tabindex'	=> 2
+                    ),
                 ),
                 'value' => isset($errors['first_name']) ? $errors['first_name'] : ''
             ),
@@ -122,7 +132,10 @@ class TOPDRESS_Form
                     'placeholder' => __('', 'topdress'),
                     'required'    => true,
                     'class'       => array('form-row-last'),
-                    'autocomplete' => 'family-name'
+                    'autocomplete' => 'family-name',
+                    'custom_attributes'	=> array(
+                        'tabindex'	=> 3
+                    ),
                 ),
                 'value' => isset($errors['last_name']) ? $errors['last_name'] : ''
             ),
@@ -133,7 +146,10 @@ class TOPDRESS_Form
                     'placeholder' => __('', 'topdress'),
                     'required'    => true,
                     'class'       => array('form-row-wide', 'address-field', 'update_totals_on_change'),
-                    'autocomplete' => 'country'
+                    'autocomplete' => 'country',
+                    'custom_attributes'	=> array(
+                        'tabindex'	=> 4
+                    ),
                 ),
                 'value' => isset($errors['country']) ? $errors['country'] : ''
             ),
@@ -143,7 +159,10 @@ class TOPDRESS_Form
                     'label'       => __('Address', 'topdress'),
                     'placeholder' => __('', 'topdress'),
                     'required'    => true,
-                    'class'       => array('form-row', 'form-row-wide')
+                    'class'       => array('form-row', 'form-row-wide'),
+                    'custom_attributes'	=> array(
+                        'tabindex'	=> 5
+                    ),
                 ),
                 'value' => isset($errors['address_1']) ? $errors['address_1'] : ''
             ),
@@ -153,7 +172,10 @@ class TOPDRESS_Form
                     'label'       => __('Phone', 'topdrop'),
                     'placeholder' => __('', 'topdrop'),
                     'required'    => true,
-                    'class'       => array('form-row', 'form-row-last')
+                    'class'       => array('form-row', 'form-row-last'),
+                    'custom_attributes'	=> array(
+                        'tabindex'	=> 7
+                    ),
                 ),
                 'value' => isset($errors['phone']) ? $errors['phone'] : ''
             ),
@@ -164,7 +186,10 @@ class TOPDRESS_Form
                     'placeholder' => __('', 'topdrop'),
                     'required'    => false,
                     'class'       => array('form-row', 'form-row-last'),
-                    'validate'  => array('postcode')
+                    'validate'  => array('postcode'),
+                    'custom_attributes'	=> array(
+                        'tabindex'	=> 6
+                    ),
                 ),
                 'value' => isset($errors['postcode']) ? $errors['postcode'] : ''
             ),
@@ -208,7 +233,8 @@ class TOPDRESS_Form
             $form['shipping_city']['value'] = $address['city_id'];
             $form['shipping_district']['value'] = $address['district_id'];
         } else {
-            $form['shipping_simple_address']['value'] = '';
+            $form['shipping_simple_address']['field']['options'] = array("{$address['district_id']}_{$address['city_id']}_{$address['state_id']}" => "{$address['district']}, {$address['city']}, {$address['state']}");
+            $form['shipping_simple_address']['value'] = "{$address['district_id']}_{$address['city_id']}_{$address['state_id']}";
         }
 
         $form['address_1']['value'] = $address['address_1'];

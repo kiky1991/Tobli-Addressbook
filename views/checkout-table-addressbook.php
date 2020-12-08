@@ -1,4 +1,5 @@
 <?php
+global $pok_helper;
 $hidden = ['id_user', 'address_2', 'created_at', 'updated_at'];
 ?>
 
@@ -19,7 +20,18 @@ result:
             <td><?php esc_html_e($address['district']); ?></td>
             <td><?php esc_html_e($address['city']); ?></td>
             <td><?php esc_html_e($address['tag']); ?></td>
-            <td><a id="topdress-select-addressbook"  <?php foreach ($address as $key => $value) : ?> <?php if (!in_array($key, $hidden)) : ?> address-<?php esc_html_e($key); ?>="<?php esc_attr_e($value); ?>" <?php endif; ?> <?php endforeach; ?>><?php esc_html_e('[select]'); ?></a></td>
+            <td><a id="topdress-select-addressbook" 
+            <?php foreach ($address as $key => $value) : ?> 
+                <?php if (!in_array($key, $hidden)) : ?> 
+                        address-<?php esc_html_e($key); ?>="<?php esc_attr_e($value); ?>"       
+            <?php endif; ?> <?php endforeach; ?>
+            <?php if ($pok_helper->is_use_simple_address_field()) : ?>
+                address-simple_address_id="<?php esc_attr_e("{$address['district_id']}_{$address['city_id']}_{$address['state_id']}"); ?>"
+                address-simple_address="<?php esc_attr_e("{$address['district']}, {$address['city']}, {$address['state']}"); ?>"
+            <?php endif; ?>
+            >
+            <?php esc_html_e('[select]'); ?>
+                </a></td>
         </tr>
     <?php endforeach; ?>
 </table>

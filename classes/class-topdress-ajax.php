@@ -75,7 +75,7 @@ class TOPDRESS_Ajax
                     $address['district'],
                     $address['city'],
                     $address['tag'],
-                    '<a class="btn small black" href="' . wc_get_endpoint_url('edit-address/edit-addressbook?id=' . $address['id_address'], '', wc_get_page_permalink('myaccount')) . '">edit</a>' . '&nbsp;' .
+                    '<a class="btn small black" href="' . wc_get_endpoint_url('edit-address/edit-addressbook?id=' . $address['id_address'], '', wc_get_page_permalink('myaccount')) . '">Edit</a>' . '&nbsp;' .
                         '<a class="btn small black" id="delete-address-book" address-id="' . $address['id_address'] . '">Delete</a>&nbsp;' .
                         $set_default
                 );

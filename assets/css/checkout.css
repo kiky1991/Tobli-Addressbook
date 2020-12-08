@@ -110,3 +110,10 @@ ul>li.topdress-load-more {
     text-align: center;
     border: 2px solid #cfcfcf;
 }
+
+@media only screen and (max-width: 360px) {
+    .topdress-modal-content{
+        width: 320px;
+        overflow-y: scroll;
+    }
+}

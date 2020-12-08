@@ -32,6 +32,23 @@ jQuery(function ($) {
         $('#shipping_district_name').val($('#select2-shipping_district-container').attr('title'));
     });
 
+    $(document).on('change', '#shipping_simple_address', function () {
+        const simple_address = $(this).find(":selected").text();
+        const addresses = simple_address.split(', ');
+        alert(addresses[1]);
+
+        if (addresses[0]) { 
+            $("input[name='shipping_district_name']").val(addresses[0]);
+        }
+        if (addresses[1]) {
+            $("input[name='shipping_city_name']").val(addresses[1]);
+        }
+        if (addresses[2]) {
+            $("input[name='shipping_state_name']").val(addresses[2]);
+        }
+        
+    });
+
     $(document).on('click', 'a#topdress-select-addressbook', function () {
         const $this = $(this);
         
@@ -54,6 +71,19 @@ jQuery(function ($) {
             $('#shipping_district').val($this.attr('address-district_id')).trigger('change');
             $('#shipping_district_name').val($this.attr('address-district'));
         });
+
+        if (topdress.is_use_simple_address_field) { 
+            $('#shipping_simple_address').append($('<option>', {
+                value: $this.attr('address-simple_address_id')
+            }).text($this.attr('address-simple_address')));
+            $('#select2-shipping_simple_address-container').attr('title', $this.attr('address-simple_address'));
+            $('#select2-shipping_simple_address-container').html($this.attr('address-simple_address'));
+            
+            $('#shipping_simple_address').val($this.attr('address-simple_address_id')).trigger('change');
+            $("input[name='shipping_state_name']").val($this.attr('address-state'));
+            $("input[name='shipping_city_name']").val($this.attr('address-city'));
+            $("input[name='shipping_district_name']").val($this.attr('address-district'));
+        }
 
         $('.topdress-modal.topdress-popup').removeClass('open');
     });
