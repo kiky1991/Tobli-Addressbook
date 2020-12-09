@@ -55,6 +55,7 @@ jQuery(function ($) {
             return;
         }
 
+        $('#shipping_tag').val($this.attr('address-tag'));
         $('#shipping_first_name').val($this.attr('address-first_name'));
         $('#shipping_last_name').val($this.attr('address-last_name'));
         $('#shipping_country').val($this.attr('address-country'));
