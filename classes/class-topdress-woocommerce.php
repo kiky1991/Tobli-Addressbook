@@ -29,6 +29,7 @@ class TOPDRESS_Woocommerce
         add_filter('woocommerce_locate_template', array($this, 'override_woocommerce_template'), 10, 3);
 
         // my account
+        add_filter( 'woocommerce_my_account_my_address_formatted_address', array( $this, 'format_myaccount_address' ), 10, 3 );
         add_filter('woocommerce_localisation_address_formats', array($this, 'my_account_address_localisation'), 50, 3);
         add_filter('woocommerce_formatted_address_replacements', array($this, 'my_account_address_replacements'), 50, 2);
     }
@@ -432,6 +433,19 @@ class TOPDRESS_Woocommerce
         // file_exists($template_directory) ? die($path) : $template;
         return file_exists($path) ? $path : $template;
     }
+
+    /**
+	 * Fix name formatting on myaccount page
+	 *
+	 * @param  array  $address     Address data.
+	 * @param  int    $customer_id Customer ID.
+	 * @param  string $name        Billing/Shipping.
+	 * @return array               Address data.
+	 */
+	public function format_myaccount_address( $address, $customer_id, $name ) {
+		$address['tag'] = get_user_meta( $customer_id, $name . '_shipping_tag', true );
+		return $address;
+	}
 
     public function my_account_address_localisation($formats)
     {
