@@ -29,7 +29,7 @@ class TOPDRESS_Woocommerce
         add_filter('woocommerce_locate_template', array($this, 'override_woocommerce_template'), 10, 3);
 
         // my account
-        add_filter( 'woocommerce_my_account_my_address_formatted_address', array( $this, 'format_myaccount_address' ), 10, 3 );
+        add_filter('woocommerce_my_account_my_address_formatted_address', array($this, 'format_myaccount_address'), 10, 3);
         add_filter('woocommerce_localisation_address_formats', array($this, 'my_account_address_localisation'), 50, 3);
         add_filter('woocommerce_formatted_address_replacements', array($this, 'my_account_address_replacements'), 50, 2);
     }
@@ -369,6 +369,24 @@ class TOPDRESS_Woocommerce
         $datas = array_merge($data, $data_shipping);
         $result = $this->core->update_addressbook($datas, true);
         if ($result) {
+            $user_id = get_current_user_id();
+            $address_id = get_user_meta($user_id, 'topdress_address_id', true);
+            if ($address_id == $datas['id_address']) {
+                update_user_meta($user_id, 'topdress_address_tag', $datas['tag']);
+                update_user_meta($user_id, 'shipping_first_name', $datas['first_name']);
+                update_user_meta($user_id, 'shipping_last_name', $datas['last_name']);
+                update_user_meta($user_id, 'shipping_country', $datas['country']);
+                update_user_meta($user_id, 'shipping_state_id', $datas['state_id']);
+                update_user_meta($user_id, 'shipping_state', $datas['state']);
+                update_user_meta($user_id, 'shipping_city_id', $datas['city_id']);
+                update_user_meta($user_id, 'shipping_city', $datas['city']);
+                update_user_meta($user_id, 'shipping_district_id', $datas['district_id']);
+                update_user_meta($user_id, 'shipping_district', $datas['district']);
+                update_user_meta($user_id, 'shipping_address_1', $datas['address_1']);
+                update_user_meta($user_id, 'shipping_postcode', $datas['postcode']);
+                update_user_meta($user_id, 'shipping_phone', $datas['phone']);
+            }
+
             wc_add_notice(__('Shipping address has been edit.', 'topdress'));
         } else {
             wc_add_notice(__('Cannot edit shipping address, call your administrator.', 'topdress'), 'error');
@@ -435,17 +453,18 @@ class TOPDRESS_Woocommerce
     }
 
     /**
-	 * Fix name formatting on myaccount page
-	 *
-	 * @param  array  $address     Address data.
-	 * @param  int    $customer_id Customer ID.
-	 * @param  string $name        Billing/Shipping.
-	 * @return array               Address data.
-	 */
-	public function format_myaccount_address( $address, $customer_id, $name ) {
-		$address['tag'] = get_user_meta( $customer_id, $name . '_shipping_tag', true );
-		return $address;
-	}
+     * Fix name formatting on myaccount page
+     *
+     * @param  array  $address     Address data.
+     * @param  int    $customer_id Customer ID.
+     * @param  string $name        Billing/Shipping.
+     * @return array               Address data.
+     */
+    public function format_myaccount_address($address, $customer_id, $name)
+    {
+        $address['tag'] = get_user_meta($customer_id, $name . '_shipping_tag', true);
+        return $address;
+    }
 
     public function my_account_address_localisation($formats)
     {

@@ -280,7 +280,6 @@ class TOPDRESS_Ajax
         update_user_meta($user_id, 'topdress_address_tag', $result['tag']);
         update_user_meta($user_id, 'shipping_first_name', $result['first_name']);
         update_user_meta($user_id, 'shipping_last_name', $result['last_name']);
-        update_user_meta($user_id, 'shipping_company', '');
         update_user_meta($user_id, 'shipping_country', $result['country']);
         update_user_meta($user_id, 'shipping_state_id', $result['state_id']);
         update_user_meta($user_id, 'shipping_state', $result['state']);
@@ -289,7 +288,6 @@ class TOPDRESS_Ajax
         update_user_meta($user_id, 'shipping_district_id', $result['district_id']);
         update_user_meta($user_id, 'shipping_district', $result['district']);
         update_user_meta($user_id, 'shipping_address_1', $result['address_1']);
-        update_user_meta($user_id, 'shipping_address_2', '');
         update_user_meta($user_id, 'shipping_postcode', $result['postcode']);
         update_user_meta($user_id, 'shipping_phone', $result['phone']);
 
