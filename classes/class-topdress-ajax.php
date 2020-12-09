@@ -88,11 +88,11 @@ class TOPDRESS_Ajax
                 $set_default = ($address_id !== $address['id_address']) ? ('<a class="btn small black" id="set-address-book" title="Set as Default" address-id="' . $address['id_address'] . '"><img src="' . TOPDRESS_PLUGIN_URI . '/assets/img/paper-push-pin.png' . '"></a>') : '';
                 $data[] = array(
                     $address['id_address'],
-                    wp_sprintf('%1$s %2$s', __($address['first_name']), __($address['last_name'])),
+                    wp_sprintf('%1$s %2$s', esc_html__($address['first_name'], 'atkpd'), esc_html__($address['last_name'], 'atkpd')),
                     $address['phone'],
-                    $address['district'],
-                    $address['city'],
-                    $address['tag'],
+                    esc_html__($address['district'], 'atkpd'),
+                    esc_html__($address['city'], 'atkpd'),
+                    esc_html__($address['tag'], 'atkpd'),
                     '<a class="btn small black" title="Edit" href="' . wc_get_endpoint_url('edit-address/edit-addressbook?id=' . $address['id_address'], '', wc_get_page_permalink('myaccount')) . '"><img src="' . TOPDRESS_PLUGIN_URI . '/assets/img/edit.png' . '"></a>' . '&nbsp;' .
                         '<a class="btn small black" title="Delete" id="delete-address-book" address-id="' . $address['id_address'] . '"><img src="' . TOPDRESS_PLUGIN_URI . '/assets/img/trash.png' . '"></a>&nbsp;' .
                         $set_default
