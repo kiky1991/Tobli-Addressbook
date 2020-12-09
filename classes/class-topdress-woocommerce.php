@@ -248,7 +248,7 @@ class TOPDRESS_Woocommerce
             'address_1' => isset($_POST['address_1']) ? sanitize_text_field(wp_unslash($_POST['address_1'])) : '',
             'address_2' => '',
             'phone' => isset($_POST['phone']) ? sanitize_text_field(wp_unslash($_POST['phone'])) : '',
-            'postcode' => isset($_POST['postcode']) ? sanitize_text_field(wp_unslash($_POST['postcode'])) : '',
+            'postcode' => ($_POST['postcode'] == '') ? null : sanitize_text_field(wp_unslash($_POST['postcode'])),
             'tag' => isset($_POST['tag']) ? sanitize_text_field(wp_unslash($_POST['tag'])) : '',
         );
 
@@ -312,7 +312,6 @@ class TOPDRESS_Woocommerce
             'last_name' => 'Last Name',
             'address_1' => 'Address',
             'phone' => 'Phone',
-            'postcode' => 'Post Code',
             'tag' => 'Tag Address'
         ];
 
@@ -362,7 +361,7 @@ class TOPDRESS_Woocommerce
             'address_1' => sanitize_text_field(wp_unslash($_POST['address_1'])),
             'address_2' => '',
             'phone' => sanitize_text_field(wp_unslash($_POST['phone'])),
-            'postcode' => sanitize_text_field(wp_unslash($_POST['postcode'])),
+            'postcode' => ($_POST['postcode'] == '') ? null : sanitize_text_field(wp_unslash($_POST['postcode'])),
             'tag' => sanitize_text_field(wp_unslash($_POST['tag'])),
         );
 
@@ -475,8 +474,8 @@ class TOPDRESS_Woocommerce
 
     public function save_fields($order_id)
     {
-        var_dump($_POST);
-        die;
+        // var_dump($_POST);
+        // die;
         global $pok_helper;
         if (!is_user_logged_in()) {
             return;

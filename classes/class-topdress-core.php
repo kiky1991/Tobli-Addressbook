@@ -54,7 +54,7 @@ if (!class_exists('TOPDRESS_Core')) {
          * 
          * @return  array|bool    bool if false
          */
-        public function list_addressbook($query = array(), $limit = 10, $offset = 0)
+        public function list_addressbook($query = array(), $limit = 10, $offset = 0, $separator = 'AND')
         {
             global $wpdb;
             $table = $wpdb->prefix . 'topdress_address_book';
@@ -73,7 +73,7 @@ if (!class_exists('TOPDRESS_Core')) {
                     $dump[] = "{$key} {$value['separator']} {$new_value}";
                 }
 
-                $where = "WHERE " . implode(" AND ", $dump);
+                $where = "WHERE " . implode(" {$separator} ", $dump);
             }
 
             return $wpdb->get_results(

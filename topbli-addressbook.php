@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 
 // constants.
 define('TOPDRESS_VERSION', '1.0.2');
-define('TOPDRESS_DBVERSION', '1.0.0');
+define('TOPDRESS_DBVERSION', '1.0.1');
 define('TOPDRESS_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('TOPDRESS_PLUGIN_URI', plugins_url(basename(plugin_dir_path(__FILE__)), basename(__FILE__)));
 
@@ -109,7 +109,7 @@ if (!class_exists('Topbli_Addressbook')) {
                 address_1 VARCHAR(500) NULL DEFAULT NULL,
                 address_2 VARCHAR(500) NULL DEFAULT NULL,
                 phone VARCHAR(20) NULL DEFAULT NULL,
-                postcode INT(8) NULL DEFAULT NULL,
+                postcode VARCHAR(8) NULL DEFAULT NULL,
                 tag VARCHAR(50) NULL DEFAULT NULL,
                 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

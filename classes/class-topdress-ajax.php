@@ -39,17 +39,35 @@ class TOPDRESS_Ajax
 
         $user_id = get_current_user_id();
         if (!empty($_POST['search']['value'])) {
+            $separator = 'OR';
             $q = array(
-                'id_user'   => array(
-                    'separator' => '=',
-                    'value'     => $user_id
-                ),
                 'first_name' => array(
+                    'separator' => 'like',
+                    'value'     => "%" . sanitize_text_field($_POST['search']['value']) . "%",
+                ),
+                'last_name' => array(
+                    'separator' => 'like',
+                    'value'     => "%" . sanitize_text_field($_POST['search']['value']) . "%",
+                ),
+                'tag' => array(
+                    'separator' => 'like',
+                    'value'     => "%" . sanitize_text_field($_POST['search']['value']) . "%",
+                ),
+                'state' => array(
+                    'separator' => 'like',
+                    'value'     => "%" . sanitize_text_field($_POST['search']['value']) . "%",
+                ),
+                'city' => array(
+                    'separator' => 'like',
+                    'value'     => "%" . sanitize_text_field($_POST['search']['value']) . "%",
+                ),
+                'district' => array(
                     'separator' => 'like',
                     'value'     => "%" . sanitize_text_field($_POST['search']['value']) . "%",
                 ),
             );
         } else {
+            $separator = 'AND';
             $q = array(
                 'id_user'   => array(
                     'separator' => '=',
@@ -60,14 +78,14 @@ class TOPDRESS_Ajax
 
         $limit = sanitize_text_field(wp_slash($_POST['length']));
         $offset = sanitize_text_field(wp_slash($_POST['start']));
-        $addresses = $this->core->list_addressbook($q, $limit, $offset);
+        $addresses = $this->core->list_addressbook($q, $limit, $offset, $separator);
         $total_address = $this->core->list_addressbook($q, 10000);
         $address_id = get_user_meta($user_id, 'topdress_address_id', true);
 
         if ($addresses) {
             $data = array();
             foreach ($addresses as $address) {
-                $set_default = ($address_id !== $address['id_address']) ? ('<a class="btn small black" id="set-address-book" address-id="' . $address['id_address'] . '">Set as default</a>') : '';
+                $set_default = ($address_id !== $address['id_address']) ? ('<a class="btn small black" id="set-address-book" address-id="' . $address['id_address'] . '"><img style="width:24px;height:24px" src="' . TOPDRESS_PLUGIN_URI . '/assets/img/paper-push-pin.png' . '">&nbsp;Set as default</a>') : '';
                 $data[] = array(
                     $address['id_address'],
                     wp_sprintf('%1$s %2$s', __($address['first_name']), __($address['last_name'])),
@@ -75,8 +93,8 @@ class TOPDRESS_Ajax
                     $address['district'],
                     $address['city'],
                     $address['tag'],
-                    '<a class="btn small black" href="' . wc_get_endpoint_url('edit-address/edit-addressbook?id=' . $address['id_address'], '', wc_get_page_permalink('myaccount')) . '">Edit</a>' . '&nbsp;' .
-                        '<a class="btn small black" id="delete-address-book" address-id="' . $address['id_address'] . '">Delete</a>&nbsp;' .
+                    '<a class="btn small black" href="' . wc_get_endpoint_url('edit-address/edit-addressbook?id=' . $address['id_address'], '', wc_get_page_permalink('myaccount')) . '"><img style="width:24px;height:24px" src="' . TOPDRESS_PLUGIN_URI . '/assets/img/edit.png' . '">&nbsp;Edit</a>' . '&nbsp;' .
+                        '<a class="btn small black" id="delete-address-book" address-id="' . $address['id_address'] . '"><img style="width:24px;height:24px" src="' . TOPDRESS_PLUGIN_URI . '/assets/img/trash.png' . '">&nbsp;Delete</a>&nbsp;' .
                         $set_default
                 );
             }

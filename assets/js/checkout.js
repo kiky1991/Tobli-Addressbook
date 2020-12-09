@@ -35,7 +35,6 @@ jQuery(function ($) {
     $(document).on('change', '#shipping_simple_address', function () {
         const simple_address = $(this).find(":selected").text();
         const addresses = simple_address.split(', ');
-        alert(addresses[1]);
 
         if (addresses[0]) { 
             $("input[name='shipping_district_name']").val(addresses[0]);
