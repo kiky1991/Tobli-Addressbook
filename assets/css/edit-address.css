@@ -36,3 +36,8 @@ a.topdress-addressbook-button {
 a.topdress-addressbook-button:hover,a.topdress-addressbook-button:active {
     color:white;
 }
+
+a.btn.small.black>img{
+    width: 14px;
+    height: 14px;
+}
