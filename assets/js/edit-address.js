@@ -71,7 +71,8 @@ jQuery(function ($) {
     $(document).on('ready', function () {
         $("span.select2").removeAttr('style');
         $("span.select2").css('width:100%! important;');
-
+        $("#billing_state, #shipping_state").prop('disabled', false);
+        
         $('#topdress_addressbook_table').dataTable({
             "select": true,
             "scrollY": true,
