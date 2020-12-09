@@ -145,7 +145,7 @@ class TOPDRESS_Form
                     'label'       => __('Country', 'topdress'),
                     'placeholder' => __('', 'topdress'),
                     'required'    => true,
-                    'class'       => array('form-row-wide', 'address-field', 'update_totals_on_change'),
+                    'class'       => array('form-row-wide', 'address-field', 'update_totals_on_change', 'hidden'),
                     'autocomplete' => 'country',
                     'custom_attributes'	=> array(
                         'tabindex'	=> 4

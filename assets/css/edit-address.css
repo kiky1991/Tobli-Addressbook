@@ -46,3 +46,7 @@ a.btn.small.black>img {
 #topdress_addressbook_table>tbody>tr>td {
     vertical-align: center !important;
 }
+
+#shipping_country_field {
+    display: none;
+}
