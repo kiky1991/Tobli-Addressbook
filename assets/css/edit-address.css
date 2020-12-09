@@ -33,11 +33,16 @@ a.topdress-addressbook-button {
     color: white;
 }
 
-a.topdress-addressbook-button:hover,a.topdress-addressbook-button:active {
-    color:white;
+a.topdress-addressbook-button:hover,
+a.topdress-addressbook-button:active {
+    color: white;
 }
 
-a.btn.small.black>img{
+a.btn.small.black>img {
     width: 14px;
     height: 14px;
+}
+
+#topdress_addressbook_table>tbody>tr>td {
+    vertical-align: center !important;
 }
