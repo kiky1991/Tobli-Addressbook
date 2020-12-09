@@ -121,7 +121,7 @@ jQuery(function ($) {
             '<option value="">Bulk Actions</option>' +
             '<option value="delete">Delete</option>' +
             '</select>' +
-            '&nbsp;<button class="dt-button" type="submit" id="button-bulk-actions">Apply</button></div>');
+            '&nbsp;<button class="dt-button btn small black" type="submit" id="button-bulk-actions">Apply</button></div>');
 
         $(document).on('click', '#button-bulk-actions', function (e) {
             const action = $('#bulk-delete-actions').val();
