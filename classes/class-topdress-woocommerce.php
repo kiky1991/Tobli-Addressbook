@@ -369,23 +369,23 @@ class TOPDRESS_Woocommerce
         $datas = array_merge($data, $data_shipping);
         $result = $this->core->update_addressbook($datas, true);
         if ($result) {
-            $user_id = get_current_user_id();
-            $address_id = get_user_meta($user_id, 'topdress_address_id', true);
-            if ($address_id == $datas['id_address']) {
-                update_user_meta($user_id, 'topdress_address_tag', $datas['tag']);
-                update_user_meta($user_id, 'shipping_first_name', $datas['first_name']);
-                update_user_meta($user_id, 'shipping_last_name', $datas['last_name']);
-                update_user_meta($user_id, 'shipping_country', $datas['country']);
-                update_user_meta($user_id, 'shipping_state_id', $datas['state_id']);
-                update_user_meta($user_id, 'shipping_state', $datas['state']);
-                update_user_meta($user_id, 'shipping_city_id', $datas['city_id']);
-                update_user_meta($user_id, 'shipping_city', $datas['city']);
-                update_user_meta($user_id, 'shipping_district_id', $datas['district_id']);
-                update_user_meta($user_id, 'shipping_district', $datas['district']);
-                update_user_meta($user_id, 'shipping_address_1', $datas['address_1']);
-                update_user_meta($user_id, 'shipping_postcode', $datas['postcode']);
-                update_user_meta($user_id, 'shipping_phone', $datas['phone']);
-            }
+            // $user_id = get_current_user_id();
+            // $address_id = get_user_meta($user_id, 'topdress_address_id', true);
+            // if ($address_id == $datas['id_address']) {
+            //     update_user_meta($user_id, 'topdress_address_tag', $datas['tag']);
+            //     update_user_meta($user_id, 'shipping_first_name', $datas['first_name']);
+            //     update_user_meta($user_id, 'shipping_last_name', $datas['last_name']);
+            //     update_user_meta($user_id, 'shipping_country', $datas['country']);
+            //     update_user_meta($user_id, 'shipping_state_id', $datas['state_id']);
+            //     update_user_meta($user_id, 'shipping_state', $datas['state']);
+            //     update_user_meta($user_id, 'shipping_city_id', $datas['city_id']);
+            //     update_user_meta($user_id, 'shipping_city', $datas['city']);
+            //     update_user_meta($user_id, 'shipping_district_id', $datas['district_id']);
+            //     update_user_meta($user_id, 'shipping_district', $datas['district']);
+            //     update_user_meta($user_id, 'shipping_address_1', $datas['address_1']);
+            //     update_user_meta($user_id, 'shipping_postcode', $datas['postcode']);
+            //     update_user_meta($user_id, 'shipping_phone', $datas['phone']);
+            // }
 
             wc_add_notice(__('Shipping address has been edit.', 'topdress'));
         } else {
@@ -496,10 +496,24 @@ class TOPDRESS_Woocommerce
         $fields['shipping']['shipping_phone']['priority'] = 110;
 
         if (is_user_logged_in()) {
+            $fields['shipping']['shipping_load_address'] = array(
+                'label'                => __('Address Book', 'topdress'),
+                'placeholder'          => __('Diana Modar, Jl Cengkareng, Kota Jakarta Barat, DKI Jakarta ', 'topdress'),
+                'type'                 => 'select',
+                'required'             => false,
+                'options'              => array('' => __('Load Addressbook', 'topdress')),
+                'class'                => array('form-row-wide', 'update_totals_on_change', 'address-field', 'select2-ajax'),
+                'custom_attributes'    => array(
+                    'data-action'    => 'topdress_search_addressbook',
+                    'data-nonce'    => wp_create_nonce('topdress-search-addressbook-nonce')
+                ),
+                'priority'             => 8,
+            );
+
             $fields['shipping']['shipping_tag']['placeholder'] = 'E.g: Home, Workplace, Customer, etc.';
             $fields['shipping']['shipping_tag']['label'] = 'Address Tag';
             $fields['shipping']['shipping_tag']['class'] = array('form-row-wide');
-            $fields['shipping']['shipping_tag']['priority'] = 10;
+            $fields['shipping']['shipping_tag']['priority'] = 9;
         }
 
         return $fields;

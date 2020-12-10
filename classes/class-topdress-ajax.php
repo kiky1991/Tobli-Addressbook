@@ -21,6 +21,7 @@ class TOPDRESS_Ajax
         add_action('wp_ajax_topdress_bulk_delete_address', array($this, 'bulk_delete_address'));
         add_action('wp_ajax_topdress_set_default_address', array($this, 'set_default_address'));
         add_action('wp_ajax_topdress_search_address_term', array($this, 'search_address_term'));
+        add_action('wp_ajax_topdress_search_addressbook', array($this, 'search_addressbook'));
         add_action('wp_ajax_topdress_checkout_load_addressbook', array($this, 'checkout_load_addressbook'));
     }
 
@@ -86,6 +87,7 @@ class TOPDRESS_Ajax
             $data = array();
             foreach ($addresses as $address) {
                 $set_default = ($address_id !== $address['id_address']) ? ('<a class="btn small black" id="set-address-book" title="Set as Default" address-id="' . $address['id_address'] . '"><img src="' . TOPDRESS_PLUGIN_URI . '/assets/img/paper-push-pin.png' . '"></a>') : '';
+                $set_default = __return_empty_string(); // force empty string for this
                 $data[] = array(
                     $address['id_address'],
                     wp_sprintf('%1$s %2$s', esc_html__($address['first_name'], 'atkpd'), esc_html__($address['last_name'], 'atkpd')),
@@ -298,6 +300,54 @@ class TOPDRESS_Ajax
                 'redirect' => wc_get_page_permalink('myaccount') . 'edit-address',
             )
         );
+    }
+
+    public function search_addressbook()
+    {
+        check_ajax_referer('topdress-search-addressbook-nonce', 'pok_action');
+        $search = isset($_GET['q']) ? sanitize_text_field(wp_unslash($_GET['q'])) : ''; // Input var okay.
+
+        $user_id = get_current_user_id();
+        if (!empty($search)) {
+            $separator = 'OR';
+            $q = array(
+                'first_name' => array(
+                    'separator' => 'like',
+                    'value'     => "%" . sanitize_text_field($search) . "%",
+                ),
+                'last_name' => array(
+                    'separator' => 'like',
+                    'value'     => "%" . sanitize_text_field($search) . "%",
+                ),
+                'tag' => array(
+                    'separator' => 'like',
+                    'value'     => "%" . sanitize_text_field($search) . "%",
+                ),
+                'state' => array(
+                    'separator' => 'like',
+                    'value'     => "%" . sanitize_text_field($search) . "%",
+                ),
+                'city' => array(
+                    'separator' => 'like',
+                    'value'     => "%" . sanitize_text_field($search) . "%",
+                ),
+                'district' => array(
+                    'separator' => 'like',
+                    'value'     => "%" . sanitize_text_field($search) . "%",
+                ),
+            );
+
+            $addresses = $this->core->list_addressbook($q, 100, 0, $separator);
+            $return = array();
+            foreach ($addresses as $address) {
+                $return[] = array(
+                    'id'    => $address['id_address'],
+                    'text'  => "{$address['first_name']} {$address['last_name']}, {$address['address_1']}, {$address['district']}, {$address['city']}, {$address['state']}" 
+                );
+            }
+        }
+
+        wp_send_json($return);
     }
 
     public function search_address_term()
