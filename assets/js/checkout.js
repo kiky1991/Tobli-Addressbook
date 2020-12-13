@@ -12,7 +12,6 @@ jQuery(function ($) {
             $('.checkout.woocommerce-checkout').append(city_name);
             $('.checkout.woocommerce-checkout').append(district_name);
             $('.checkout.woocommerce-checkout').append(is_add_new);
-            shipping_checkout_field_prepop();
 
             $('#shipping_state_name').val($('#select2-shipping_state-container').attr('title'));
             $('#shipping_city').on('options_loaded', function (e) {
@@ -138,16 +137,56 @@ jQuery(function ($) {
         e.preventDefault();
     });
 
-    /*
-    * AJAX call display address on checkout when selected.
-    */
-    function shipping_checkout_field_prepop() {
-        $('span.select2-search.select2-search--dropdown').append('<a href="fuck">fycj</a>');
-    }
+    $(document).on('change', '#shipping_load_address', function (e) {
+        const id_address = $(this).val();
 
-    $('#shipping_load_address').change(
-        function () {
-            shipping_checkout_field_prepop();
+        $.ajax({
+            type: 'POST',
+            url: topdress.url,
+            data: {
+                id_address: id_address,
+                action: 'topdress_get_detail_address',
+                topdress_get_detail_address_nonce: nonce.get_detail_address
+            },
+            success: function (response) {
+                if (response) {
+                    put_field_address(response);
+                }
+            }
+        });
+
+        e.preventDefault();
+    });
+
+    function put_field_address(field) { 
+        $('#shipping_tag').val(field.tag);
+        $('#shipping_first_name').val(field.first_name);
+        $('#shipping_last_name').val(field.last_name);
+        $('#shipping_country').val(field.country);
+        $('#shipping_address_1').val(field.address_1);
+        $('#shipping_postcode').val(field.postcode);
+        $('#shipping_state').val(field.state_id).trigger('change');
+        $('#shipping_state_name').val(field.state);
+        $('#shipping_city').on('options_loaded', function (e) {
+            $('#shipping_city').val(field.city_id).trigger('change');
+            $('#shipping_city_name').val(field.city);
+        });
+        $('#shipping_district').on('options_loaded', function (e) {
+            $('#shipping_district').val(field.district_id).trigger('change');
+            $('#shipping_district_name').val(field.district);
+        });
+
+        if (topdress.is_use_simple_address_field) { 
+            $('#shipping_simple_address').append($('<option>', {
+                value: field.district_id + '_' + field.city_id + '_' + field.state_id
+            }).text(field.district + ', ' + field.city + ', ' + field.state));
+            $('#select2-shipping_simple_address-container').attr('title', field.district + ', ' + field.city + ', ' + field.state);
+            $('#select2-shipping_simple_address-container').html(field.district + ', ' + field.city + ', ' + field.state);
+            
+            $('#shipping_simple_address').val(field.district_id + '_' + field.city_id + '_' + field.state_id).trigger('change');
+            $("input[name='shipping_state_name']").val(field.state);
+            $("input[name='shipping_city_name']").val(field.city);
+            $("input[name='shipping_district_name']").val(field.district);
         }
-    );
+    }
 });

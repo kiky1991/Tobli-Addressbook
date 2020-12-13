@@ -23,6 +23,7 @@ class TOPDRESS_Ajax
         add_action('wp_ajax_topdress_search_address_term', array($this, 'search_address_term'));
         add_action('wp_ajax_topdress_search_addressbook', array($this, 'search_addressbook'));
         add_action('wp_ajax_topdress_checkout_load_addressbook', array($this, 'checkout_load_addressbook'));
+        add_action('wp_ajax_topdress_get_detail_address', array($this, 'get_detail_address'));
     }
 
     /**
@@ -452,5 +453,23 @@ class TOPDRESS_Ajax
             echo $content;
         }
         wp_die();
+    }
+
+    public function get_detail_address()
+    {
+        check_ajax_referer('topdress-get-detail-address-nonce', 'topdress_get_detail_address_nonce');
+
+        $id = isset($_POST['id_address']) ? sanitize_text_field(wp_unslash($_POST['id_address'])) : 0;
+        
+        if ($id < 1) {
+            wp_die(-1);
+        }
+
+        $user_id = get_current_user_id();
+        $result = $this->core->search_addressbook($id, 'AND id_user = ' . $user_id);
+
+        if ($result) {
+            wp_send_json($result);
+        }
     }
 }

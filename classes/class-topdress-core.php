@@ -33,14 +33,14 @@ if (!class_exists('TOPDRESS_Core')) {
          * 
          * @return  array|bool    bool if false
          */
-        public function search_addressbook($address_id)
+        public function search_addressbook($address_id, $andwhere = '')
         {
             global $wpdb;
             $table = $wpdb->prefix . "topdress_address_book";
 
             return $wpdb->get_row(
                 $wpdb->prepare(
-                    "SELECT * FROM $table WHERE id_address = %d",
+                    "SELECT * FROM $table WHERE id_address = %d {$andwhere}",
                     $address_id
                 ),
                 ARRAY_A
