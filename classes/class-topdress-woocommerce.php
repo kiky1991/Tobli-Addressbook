@@ -501,11 +501,14 @@ class TOPDRESS_Woocommerce
                 'placeholder'          => __('Diana Modar, Jl Cengkareng, Kota Jakarta Barat, DKI Jakarta ', 'topdress'),
                 'type'                 => 'select',
                 'required'             => false,
-                'options'              => array('' => __('Load Addressbook', 'topdress')),
-                'class'                => array('form-row-wide', 'update_totals_on_change', 'address-field', 'select2-ajax'),
+                'options'              => array(
+                    '' => __('Load Addressbook', 'topdress'),
+                    'add_new' => __('Add New Address', 'topdress')
+                ),
+                'class'                => array('form-row-wide', 'address-field', 'select2-ajax', 'address_book'),
                 'custom_attributes'    => array(
-                    'data-action'    => 'topdress_search_addressbook',
-                    'data-nonce'    => wp_create_nonce('topdress-search-addressbook-nonce')
+                    'data-action'       => 'topdress_search_addressbook',
+                    'data-nonce'        => wp_create_nonce('topdress-search-addressbook-nonce')
                 ),
                 'priority'             => 8,
             );
@@ -521,8 +524,6 @@ class TOPDRESS_Woocommerce
 
     public function save_fields($order_id)
     {
-        // var_dump($_POST);
-        // die;
         global $pok_helper;
         if (!is_user_logged_in()) {
             return;
@@ -533,59 +534,59 @@ class TOPDRESS_Woocommerce
             update_post_meta($order_id, '_topdress_address_tag', $tag);
         }
 
-        if (isset($_POST['shipping_district'])) {
-            $district = sanitize_text_field(wp_unslash($_POST['shipping_district']));   // WPCS: Input var okay, CSRF ok.
+        if (isset($_POST['shipping_is_add_new']) && $_POST['shipping_is_add_new'] == true) {
+            // $district = sanitize_text_field(wp_unslash($_POST['shipping_district']));   // WPCS: Input var okay, CSRF ok.
 
             $user_id = get_current_user_id();
-            $q = array(
-                'id_user'   => array(
-                    'separator' => '=',
-                    'value'     => $user_id
-                ),
-                'district_id'   => array(
-                    'separator' => '=',
-                    'value'     => $district
-                ),
+            // $q = array(
+            //     'id_user'   => array(
+            //         'separator' => '=',
+            //         'value'     => $user_id
+            //     ),
+            //     'district_id'   => array(
+            //         'separator' => '=',
+            //         'value'     => $district
+            //     ),
+            // );
+
+            // $addresses = $this->core->list_addressbook($q);
+            // if (is_array($addresses) && count($addresses) < 1) {
+            if (!$pok_helper->is_use_simple_address_field()) {
+                $data_shipping = array(
+                    'state_id' => sanitize_text_field(wp_unslash($_POST['shipping_state'])),
+                    'state' => sanitize_text_field(wp_unslash($_POST['shipping_state_name'])),
+                    'city_id' => sanitize_text_field(wp_unslash($_POST['shipping_city'])),
+                    'city' => sanitize_text_field(wp_unslash($_POST['shipping_city_name'])),
+                    'district_id' => sanitize_text_field(wp_unslash($_POST['shipping_district'])),
+                    'district' => sanitize_text_field(wp_unslash($_POST['shipping_district_name'])),
+                );
+            } else {
+                $ship_id = explode('_', isset($_POST['shipping_simple_address']) ? sanitize_text_field(wp_unslash($_POST['shipping_simple_address'])) : '');
+                $data_shipping = array(
+                    'state_id'      => $ship_id[2],
+                    'state'         => sanitize_text_field(wp_unslash($_POST['shipping_state_name'])),
+                    'city_id'       => $ship_id[1],
+                    'city'          => sanitize_text_field(wp_unslash($_POST['shipping_city_name'])),
+                    'district_id'   => $ship_id[0],
+                    'district'      => sanitize_text_field(wp_unslash($_POST['shipping_district_name'])),
+                );
+            }
+
+            $data = array(
+                'id_user'   => $user_id,
+                'first_name' => isset($_POST['shipping_first_name']) ? sanitize_text_field(wp_unslash($_POST['shipping_first_name'])) : '',
+                'last_name' => isset($_POST['shipping_last_name']) ? sanitize_text_field(wp_unslash($_POST['shipping_last_name'])) : '',
+                'country' => isset($_POST['shipping_country']) ? sanitize_text_field(wp_unslash($_POST['shipping_country'])) : '',
+                'address_1' => isset($_POST['shipping_address_1']) ? sanitize_text_field(wp_unslash($_POST['shipping_address_1'])) : '',
+                'address_2' => '',
+                'phone' => isset($_POST['shipping_phone']) ? sanitize_text_field(wp_unslash($_POST['shipping_phone'])) : '',
+                'postcode' => isset($_POST['shipping_postcode']) ? sanitize_text_field(wp_unslash($_POST['shipping_postcode'])) : 0,
+                'tag' => isset($_POST['shipping_tag']) ? sanitize_text_field(wp_unslash($_POST['shipping_tag'])) : '',
             );
 
-            $addresses = $this->core->list_addressbook($q);
-            if (is_array($addresses) && count($addresses) < 1) {
-                if (!$pok_helper->is_use_simple_address_field()) {
-                    $data_shipping = array(
-                        'state_id' => sanitize_text_field(wp_unslash($_POST['shipping_state'])),
-                        'state' => sanitize_text_field(wp_unslash($_POST['shipping_state_name'])),
-                        'city_id' => sanitize_text_field(wp_unslash($_POST['shipping_city'])),
-                        'city' => sanitize_text_field(wp_unslash($_POST['shipping_city_name'])),
-                        'district_id' => sanitize_text_field(wp_unslash($_POST['shipping_district'])),
-                        'district' => sanitize_text_field(wp_unslash($_POST['shipping_district_name'])),
-                    );
-                } else {
-                    $ship_id = explode('_', isset($_POST['shipping_simple_address']) ? sanitize_text_field(wp_unslash($_POST['shipping_simple_address'])) : '');
-                    $data_shipping = array(
-                        'state_id'      => $ship_id[2],
-                        'state'         => sanitize_text_field(wp_unslash($_POST['shipping_state_name'])),
-                        'city_id'       => $ship_id[1],
-                        'city'          => sanitize_text_field(wp_unslash($_POST['shipping_city_name'])),
-                        'district_id'   => $ship_id[0],
-                        'district'      => sanitize_text_field(wp_unslash($_POST['shipping_district_name'])),
-                    );
-                }
-
-                $data = array(
-                    'id_user'   => $user_id,
-                    'first_name' => isset($_POST['shipping_first_name']) ? sanitize_text_field(wp_unslash($_POST['shipping_first_name'])) : '',
-                    'last_name' => isset($_POST['shipping_last_name']) ? sanitize_text_field(wp_unslash($_POST['shipping_last_name'])) : '',
-                    'country' => isset($_POST['shipping_country']) ? sanitize_text_field(wp_unslash($_POST['shipping_country'])) : '',
-                    'address_1' => isset($_POST['shipping_address_1']) ? sanitize_text_field(wp_unslash($_POST['shipping_address_1'])) : '',
-                    'address_2' => '',
-                    'phone' => isset($_POST['shipping_phone']) ? sanitize_text_field(wp_unslash($_POST['shipping_phone'])) : '',
-                    'postcode' => isset($_POST['shipping_postcode']) ? sanitize_text_field(wp_unslash($_POST['shipping_postcode'])) : 0,
-                    'tag' => isset($_POST['shipping_tag']) ? sanitize_text_field(wp_unslash($_POST['shipping_tag'])) : '',
-                );
-
-                $datas = array_merge($data, $data_shipping);
-                $this->core->update_addressbook($datas);
-            }
+            $datas = array_merge($data, $data_shipping);
+            $this->core->update_addressbook($datas);
+            // }
         }
     }
 }

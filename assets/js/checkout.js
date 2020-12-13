@@ -1,14 +1,18 @@
 jQuery(function ($) {
     $(document).on('ready', function () {
         if (topdress.islogin) {
-            $(".shipping_address").prepend(topdress.load_button);
+            // $(".shipping_address").prepend(topdress.load_button);
+            
             $('body').append(topdress.load_form);
             var state_name = $("<input type=\"hidden\" id=\"shipping_state_name\" name=\"shipping_state_name\" />");
             var city_name = $("<input type=\"hidden\" id=\"shipping_city_name\" name=\"shipping_city_name\" />");
             var district_name = $("<input type=\"hidden\" id=\"shipping_district_name\" name=\"shipping_district_name\" />");
+            var is_add_new = $("<input type=\"hidden\" id=\"shipping_is_add_new\" name=\"shipping_is_add_new\" />");
             $('.checkout.woocommerce-checkout').append(state_name);
             $('.checkout.woocommerce-checkout').append(city_name);
             $('.checkout.woocommerce-checkout').append(district_name);
+            $('.checkout.woocommerce-checkout').append(is_add_new);
+            shipping_checkout_field_prepop();
 
             $('#shipping_state_name').val($('#select2-shipping_state-container').attr('title'));
             $('#shipping_city').on('options_loaded', function (e) {
@@ -133,4 +137,17 @@ jQuery(function ($) {
 
         e.preventDefault();
     });
+
+    /*
+    * AJAX call display address on checkout when selected.
+    */
+    function shipping_checkout_field_prepop() {
+        $('span.select2-search.select2-search--dropdown').append('<a href="fuck">fycj</a>');
+    }
+
+    $('#shipping_load_address').change(
+        function () {
+            shipping_checkout_field_prepop();
+        }
+    );
 });

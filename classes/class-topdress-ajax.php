@@ -342,7 +342,8 @@ class TOPDRESS_Ajax
             foreach ($addresses as $address) {
                 $return[] = array(
                     'id'    => $address['id_address'],
-                    'text'  => "{$address['first_name']} {$address['last_name']}, {$address['address_1']}, {$address['district']}, {$address['city']}, {$address['state']}" 
+                    'text'  => "{$address['first_name']} {$address['last_name']}, {$address['address_1']}, {$address['district']}, {$address['city']}, {$address['state']}",
+                    'data-id_address'    => $address['id_address'],
                 );
             }
         }
