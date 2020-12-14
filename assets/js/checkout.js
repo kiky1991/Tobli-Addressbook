@@ -12,9 +12,6 @@ jQuery(function ($) {
             $('.checkout.woocommerce-checkout').append(city_name);
             $('.checkout.woocommerce-checkout').append(district_name);
             $('.checkout.woocommerce-checkout').append(is_add_new);
-            $('#shipping_load_address').on('select2:open', () => {
-                $(".select2-results:not(:has(a))").append('<a class="add-new-shipping">Add New Address</a>');
-            });
 
             $('#shipping_state_name').val($('#select2-shipping_state-container').attr('title'));
             $('#shipping_city').on('options_loaded', function (e) {

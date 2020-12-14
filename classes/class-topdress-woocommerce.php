@@ -497,21 +497,27 @@ class TOPDRESS_Woocommerce
         $fields['shipping']['shipping_phone']['class'] = array('form-row-wide');
         $fields['shipping']['shipping_phone']['priority'] = 110;
 
-        if (is_user_logged_in()) {
-            $default_shipping = $this->get_default_shipping();
-            if(!empty($default_shipping)) {
-                $options = array('default' => $default_shipping);
-            } else {
-                $options = array('' => __('Some data default shipping', 'topdress'));
-            }
+        $default_address = $this->get_default_shipping();
 
+        if (!empty($default_address)) {
+            $options = array(
+                'default' => $default_address,
+                'add_new' => 'Add New Address'
+            );
+        } else {
+            $options = array(
+                'add_new' => 'Add New Address'
+            );
+        }
+
+        if (is_user_logged_in()) {
             $fields['shipping']['shipping_load_address'] = array(
                 'label'                => __('Address Book', 'topdress'),
                 'placeholder'          => __('Diana Modar, Jl Cengkareng, Kota Jakarta Barat, DKI Jakarta ', 'topdress'),
                 'type'                 => 'select',
                 'required'             => false,
                 'options'              => $options,
-                'class'                => array('form-row-wide', 'address-field', 'select2-ajax', 'address_book'),
+                'class'                => array('form-row-wide', 'topdress-search-addressbook', 'select2-ajax'),
                 'custom_attributes'    => array(
                     'data-action'       => 'topdress_search_addressbook',
                     'data-nonce'        => wp_create_nonce('topdress-search-addressbook-nonce')
@@ -608,7 +614,7 @@ class TOPDRESS_Woocommerce
             $city = get_user_meta($user_id, 'shipping_city', true);
             $state = get_user_meta($user_id, 'shipping_state', true);
 
-            return "{$first_name} {$last_name}, {$address_1}, {$city}, {$state}";
+            return "{$first_name} {$last_name}, {$address_1}, {$district}, {$city}, {$state}";
         }
 
         return;

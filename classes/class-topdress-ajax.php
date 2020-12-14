@@ -344,9 +344,13 @@ class TOPDRESS_Ajax
                 $return[] = array(
                     'id'    => $address['id_address'],
                     'text'  => "{$address['first_name']} {$address['last_name']}, {$address['address_1']}, {$address['district']}, {$address['city']}, {$address['state']}",
-                    'data-id_address'    => $address['id_address'],
                 );
             }
+
+            $return[] = array(
+                'id'    => 'add_new',
+                'text'  => 'Add New Address',
+            );
         }
 
         wp_send_json($return);
