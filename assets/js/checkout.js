@@ -12,6 +12,9 @@ jQuery(function ($) {
             $('.checkout.woocommerce-checkout').append(city_name);
             $('.checkout.woocommerce-checkout').append(district_name);
             $('.checkout.woocommerce-checkout').append(is_add_new);
+            $('#shipping_load_address').on('select2:open', () => {
+                $(".select2-results:not(:has(a))").append('<a class="add-new-shipping">Add New Address</a>');
+            });
 
             $('#shipping_state_name').val($('#select2-shipping_state-container').attr('title'));
             $('#shipping_city').on('options_loaded', function (e) {
@@ -63,6 +66,7 @@ jQuery(function ($) {
         $('#shipping_last_name').val($this.attr('address-last_name'));
         $('#shipping_country').val($this.attr('address-country'));
         $('#shipping_address_1').val($this.attr('address-address_1'));
+        $('#shipping_phone').val($this.attr('address-phone'));
         $('#shipping_postcode').val($this.attr('address-postcode'));
         $('#shipping_state').val($this.attr('address-state_id')).trigger('change');
         $('#shipping_state_name').val($this.attr('address-state'));
@@ -158,13 +162,44 @@ jQuery(function ($) {
         e.preventDefault();
     });
 
+    $(document).on('click', 'a.add-new-shipping', function () {
+        var field = {
+            'tag': '',
+            'first_name':'',
+            'last_name':'',
+            'country':'ID',
+            'address_1':'',
+            'postcode':'',
+            'state_id':'',
+            'state':'',
+            'city':'',
+            'city_id':'',
+            'district':'',
+            'district_id':'',
+        }
+
+        put_field_address(field);
+        $("input[name='shipping_is_add_new']").val(true);
+    });
+
     function put_field_address(field) { 
+        const address_key = '';
+        if (field.district_id && field.city_id && field.state_id) {
+            address_key = field.district_id + '_' + field.city_id + '_' + field.state_id;
+        }
+
+        const address_value = '';
+        if (field.district && field.city && field.state) {
+            address_value = field.district + ', ' + field.city + ', ' + field.state;
+        }
+
         $('#shipping_tag').val(field.tag);
         $('#shipping_first_name').val(field.first_name);
         $('#shipping_last_name').val(field.last_name);
         $('#shipping_country').val(field.country);
         $('#shipping_address_1').val(field.address_1);
         $('#shipping_postcode').val(field.postcode);
+        $('#shipping_phone').val(field.phone);
         $('#shipping_state').val(field.state_id).trigger('change');
         $('#shipping_state_name').val(field.state);
         $('#shipping_city').on('options_loaded', function (e) {
@@ -178,12 +213,12 @@ jQuery(function ($) {
 
         if (topdress.is_use_simple_address_field) { 
             $('#shipping_simple_address').append($('<option>', {
-                value: field.district_id + '_' + field.city_id + '_' + field.state_id
-            }).text(field.district + ', ' + field.city + ', ' + field.state));
-            $('#select2-shipping_simple_address-container').attr('title', field.district + ', ' + field.city + ', ' + field.state);
-            $('#select2-shipping_simple_address-container').html(field.district + ', ' + field.city + ', ' + field.state);
+                value: address_key
+            }).text(address_value));
+            $('#select2-shipping_simple_address-container').attr('title', address_value);
+            $('#select2-shipping_simple_address-container').html(address_value);
             
-            $('#shipping_simple_address').val(field.district_id + '_' + field.city_id + '_' + field.state_id).trigger('change');
+            $('#shipping_simple_address').val(address_key).trigger('change');
             $("input[name='shipping_state_name']").val(field.state);
             $("input[name='shipping_city_name']").val(field.city);
             $("input[name='shipping_district_name']").val(field.district);

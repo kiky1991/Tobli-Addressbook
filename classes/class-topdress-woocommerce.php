@@ -127,11 +127,12 @@ class TOPDRESS_Woocommerce
                 'topdress-checkout',
                 'topdress',
                 array(
-                    'url'           => admin_url('admin-ajax.php'),
-                    'islogin'       => is_user_logged_in(),
-                    'load_button'   => $button,
-                    'load_form'     => $form,
-                    'is_use_simple_address_field' => $pok_helper->is_use_simple_address_field(),
+                    'url'                           => admin_url('admin-ajax.php'),
+                    'islogin'                       => is_user_logged_in(),
+                    'load_button'                   => $button,
+                    'load_form'                     => $form,
+                    'default_shipping'              => $this->get_default_shipping(),
+                    'is_use_simple_address_field'   => $pok_helper->is_use_simple_address_field(),
                 )
             );
             wp_localize_script(
@@ -497,15 +498,19 @@ class TOPDRESS_Woocommerce
         $fields['shipping']['shipping_phone']['priority'] = 110;
 
         if (is_user_logged_in()) {
+            $default_shipping = $this->get_default_shipping();
+            if(!empty($default_shipping)) {
+                $options = array('default' => $default_shipping);
+            } else {
+                $options = array('' => __('Some data default shipping', 'topdress'));
+            }
+
             $fields['shipping']['shipping_load_address'] = array(
                 'label'                => __('Address Book', 'topdress'),
                 'placeholder'          => __('Diana Modar, Jl Cengkareng, Kota Jakarta Barat, DKI Jakarta ', 'topdress'),
                 'type'                 => 'select',
                 'required'             => false,
-                'options'              => array(
-                    '' => __('Load Addressbook', 'topdress'),
-                    'add_new' => __('Add New Address', 'topdress')
-                ),
+                'options'              => $options,
                 'class'                => array('form-row-wide', 'address-field', 'select2-ajax', 'address_book'),
                 'custom_attributes'    => array(
                     'data-action'       => 'topdress_search_addressbook',
@@ -589,5 +594,23 @@ class TOPDRESS_Woocommerce
             $this->core->update_addressbook($datas);
             // }
         }
+    }
+
+    public function get_default_shipping()
+    {
+        $user_id = get_current_user_id();
+
+        $first_name = get_user_meta($user_id, 'shipping_first_name', true);
+        if (!empty($first_name)) {
+            $last_name = get_user_meta($user_id, 'shipping_last_name', true);
+            $address_1 = get_user_meta($user_id, 'shipping_address_1', true);
+            $district = get_user_meta($user_id, 'shipping_district', true);
+            $city = get_user_meta($user_id, 'shipping_city', true);
+            $state = get_user_meta($user_id, 'shipping_state', true);
+
+            return "{$first_name} {$last_name}, {$address_1}, {$city}, {$state}";
+        }
+
+        return;
     }
 }

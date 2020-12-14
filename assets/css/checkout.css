@@ -111,8 +111,14 @@ ul>li.topdress-load-more {
     border: 2px solid #cfcfcf;
 }
 
+a.add-new-shipping {
+    font-size: 1.14rem;
+    padding: 0.8em;
+    display: inline-table;
+}
+
 @media only screen and (max-width: 360px) {
-    .topdress-modal-content{
+    .topdress-modal-content {
         width: 320px;
         overflow-y: scroll;
     }
